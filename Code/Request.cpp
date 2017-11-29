@@ -27,7 +27,7 @@ Request::Request(string info, Company* company) :
 }
 
 Request::Request(Company* company, Publication* publ, Store* store, unsigned int quantity) :
-	company(company), publication(publ), store(store), quantity(quantity) {}
+	company(company), publication(publ), store(store), quantity(quantity), requestDate(company->today()) {}
 
 Publication* Request::getPublication() const
 {
@@ -83,9 +83,15 @@ string Request::writeInfo() const
 
 string Request::writeToFile() const
 {
-	string str = publication->getName() + FILE_ITEM_SEPARATOR;
-	str += store->getName() + FILE_ITEM_SEPARATOR;
-	str += requestDate.write() + FILE_ITEM_SEPARATOR;
+	string space = " ";
+	string str = publication->getName() + space + FILE_ITEM_SEPARATOR + space;
+	str += store->getName() + space + FILE_ITEM_SEPARATOR + space;
+	str += requestDate.write() + space + FILE_ITEM_SEPARATOR + space;
 	str += to_string(quantity) + FILE_LINE_SEPARATOR;
 	return str;
+}
+
+bool Request::operator<(const Request& r2)
+{
+	return requestDate < r2.getRequestDate();
 }

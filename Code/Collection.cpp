@@ -6,6 +6,7 @@
 #include "Date.h"
 
 #include <iostream>
+#include <algorithm>
 
 
 Collection::Collection(string info, Company* company) :
@@ -52,6 +53,10 @@ void Collection::setMinProductionTime(unsigned int newTime)
 	minProductionTime = newTime;
 }
 
+vector<Publication*> Collection::getAllPublications() const {
+	return vector<Publication*>();
+}
+
 Publication* Collection::getPublication(string name) const
 {
 	cout << "e isto\n";
@@ -81,9 +86,9 @@ string Collection::writeInfo() const
 }
 
 string Collection::writeToFile() const {
-	string str = name + FILE_ITEM_SEPARATOR;
-	str += type + FILE_ITEM_SEPARATOR;
-	str += minProductionTime + FILE_LINE_SEPARATOR;
+	string str = name + " " + FILE_ITEM_SEPARATOR + " ";
+	str += type + " " + FILE_ITEM_SEPARATOR + " ";
+	str += to_string(minProductionTime) + FILE_LINE_SEPARATOR;
 	return str;
 }
 
@@ -133,6 +138,28 @@ Book* BookCollection::getBook(string name) const
 			return *it;
 
 	return nullptr;
+}
+
+bool cheaper(const Book* b1, const Book* b2)
+{
+	return b1->getPrice() < b2->getPrice();
+}
+
+vector<Book*> BookCollection::sortCheaper() const
+{
+	vector<Book*> sorted = books;
+
+	sort(sorted.begin(), sorted.end(), cheaper);
+
+	return sorted;
+}
+
+vector<Publication*> BookCollection::getAllPublications() const {
+	vector<Publication*> pub;
+
+	transform(books.begin(), books.end(), back_inserter(pub), [](Book* book) {return (Publication*)book; });
+
+	return pub;
 }
 
 Publication* BookCollection::getPublication(string name) const
@@ -201,12 +228,12 @@ string BookCollection::writeInfo() const
 string BookCollection::writeToFile() const
 {
 	string str = Collection::writeToFile();
-	for (unsigned i = 0; i <= books.size(); i++)
+	for (unsigned i = 0; i < books.size(); i++)
 	{
-		str += books[i]->getName() + FILE_ITEM_SEPARATOR;
-		str += books[i]->getDescription() + FILE_ITEM_SEPARATOR;
-		str += books[i]->getDate().write() + FILE_ITEM_SEPARATOR;
-		str += to_string(books[i]->getPrice()) + FILE_ITEM_SEPARATOR + "\n";
+		str += books[i]->getName() + " " + FILE_ITEM_SEPARATOR + " ";
+		str += books[i]->getDescription() + " " + FILE_ITEM_SEPARATOR + " ";
+		str += books[i]->getDate().write() + " " + FILE_ITEM_SEPARATOR + " ";
+		str += to_string(books[i]->getPrice()) + "\n";
 	}
 	return str;
 }
@@ -232,7 +259,9 @@ MagazineCollection::MagazineCollection(string info, Company* company) :
 }
 
 MagazineCollection::MagazineCollection(Company* company, string name, string type, unsigned int time, unsigned int freq) :
-	Collection(company, name, type, time), releaseFrequency(freq) {}
+	Collection(company, name, type, time), releaseFrequency(freq) {
+	magazine = new Magazine(name, DEFAULT_DESCRIPTION, this, company->today(), DEFAULT_PRICE, 1, 1);
+}
 
 Magazine* MagazineCollection::getMagazine() const
 {
@@ -247,6 +276,14 @@ unsigned int MagazineCollection::getReleaseFrequency() const
 void MagazineCollection::setReleaseFrequency(unsigned int newFreq)
 {
 	releaseFrequency = newFreq;
+}
+
+vector<Publication*> MagazineCollection::getAllPublications() const {
+	vector<Publication*> pub;
+
+	pub.push_back((Publication*)magazine);
+
+	return pub;
 }
 
 Publication* MagazineCollection::getPublication(string name) const
@@ -288,11 +325,12 @@ string MagazineCollection::writeInfo() const
 
 string MagazineCollection::writeToFile() const {
 	string str = Collection::writeToFile();
-	str += to_string(releaseFrequency) + FILE_ITEM_SEPARATOR;
-	str += magazine->getDescription() + FILE_ITEM_SEPARATOR;
-	str += to_string(magazine->getVolume()) + FILE_ITEM_SEPARATOR;
-	str += to_string(magazine->getNumber()) + FILE_ITEM_SEPARATOR;
-	str += magazine->getDate().write() + FILE_ITEM_SEPARATOR;
-	str += to_string(magazine->getPrice());
+	str += to_string(releaseFrequency) + " " + FILE_ITEM_SEPARATOR + " ";
+	str += magazine->getDescription() + " " + FILE_ITEM_SEPARATOR + " ";
+	str += to_string(magazine->getVolume()) + " " + FILE_ITEM_SEPARATOR + " ";
+	str += to_string(magazine->getNumber()) + " " + FILE_ITEM_SEPARATOR + " ";
+	str += magazine->getDate().write() + " " + FILE_ITEM_SEPARATOR + " ";
+	str += to_string(magazine->getPrice()) + FILE_LINE_SEPARATOR;
+	//str += magazine->writeInfo() + FILE_LINE_SEPARATOR;
 	return str;
 }

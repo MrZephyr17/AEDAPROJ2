@@ -23,10 +23,11 @@ void Company::addStore(Store* newS)
 	}
 	stores.push_back(newS);
 
-	for (auto it = collections.begin(); it != collections.end(); ++it) {
-		newS->addCollection(*it);
-		newS->makeRequests(*it);
-	}
+	if (newS->noStock())
+		for (auto it = collections.begin(); it != collections.end(); ++it) {
+			newS->addCollection(*it);
+			newS->makeRequests(*it);
+		}
 }
 
 void Company::addCollection(Collection* newC)
@@ -38,7 +39,7 @@ void Company::addCollection(Collection* newC)
 
 	for (auto it = stores.begin(); it != stores.end(); ++it) {
 		(*it)->addCollection(newC);
-		(*it)->makeRequests(newC);
+		//(*it)->makeRequests(newC);
 	}
 }
 
@@ -56,19 +57,30 @@ void Company::addRequest(Request* newR)
 		if (*it == newR) throw DuplicateElement<Request>(newR);
 	}
 	productionPlan.push_back(newR);
+
+	sort(productionPlan.begin(), productionPlan.end());
 }
 
 
 
 void Company::removeStore(Store* store)
 {
+	productionPlan.erase(remove_if(productionPlan.begin(), productionPlan.end(), [&store](Request* req)
+	{
+		return req->getStore() == store;
+	}), productionPlan.end());
+	/*
 	for (auto it = productionPlan.begin(); it != productionPlan.end(); ++it) {
 		if ((*it)->getStore() == store) {
+			auto li = it + 1;
 			delete *it;
 			productionPlan.erase(it);
-			if (it == productionPlan.end()) break;
+			if (li == productionPlan.end()) break;
+			else it = li;
 		}
 	}
+	*/
+	cout << "fixe\n";
 
 	if (store->getEmployee() != nullptr) {
 		store->getEmployee()->setStore(nullptr);
@@ -81,8 +93,9 @@ void Company::removeStore(Store* store)
 			break;
 		}
 	}
-}
 
+	for (auto it : stores) cout << it->writeInfo();
+}
 
 void Company::removeCollection(Collection* collection)
 {
@@ -90,14 +103,21 @@ void Company::removeCollection(Collection* collection)
 		(*it)->removeCollection(collection);
 	}
 
+	productionPlan.erase(remove_if(productionPlan.begin(), productionPlan.end(), [&collection](Request* req)
+	{
+		return req->getPublication()->getCollection() == collection;
+	}), productionPlan.end());
+	/*
 	for (auto it = productionPlan.begin(); it != productionPlan.end(); ++it) {
 		if ((*it)->getPublication()->getCollection() == collection) {
+			auto li = it + 1;
 			delete *it;
 			productionPlan.erase(it);
 			if (it == productionPlan.end()) break;
+			else it = li + 1;
 		}
 	}
-
+	*/
 	for (auto it = collections.begin(); it != collections.end(); ++it) {
 		if (*it == collection) {
 			delete collection;
@@ -106,7 +126,6 @@ void Company::removeCollection(Collection* collection)
 		}
 	}
 }
-
 
 void Company::removeEmployee(Employee* employee)
 {
@@ -120,7 +139,6 @@ void Company::removeEmployee(Employee* employee)
 	}
 }
 
-
 void Company::removeRequest(Request* request)
 {
 	for (auto it = productionPlan.begin(); it != productionPlan.end(); ++it) {
@@ -132,6 +150,10 @@ void Company::removeRequest(Request* request)
 	}
 }
 
+
+
+
+
 Store* Company::getStore(string name) const
 {
 	return getObject(name, stores);
@@ -142,10 +164,9 @@ Collection* Company::getCollection(string name) const
 	return getObject(name, collections);
 }
 
-
 Publication* Company::getPublication(string name) const
 {
-	for (int i = 0; i < collections.size();i++) {
+	for (unsigned i = 0; i < collections.size(); i++) {
 		Publication* publ = collections.at(i)->getPublication(name);
 		if (publ != nullptr) return publ;
 	}
@@ -186,6 +207,7 @@ Date Company::today() const
 {
 	return currentDay;
 }
+
 
 
 

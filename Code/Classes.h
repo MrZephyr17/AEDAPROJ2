@@ -23,7 +23,14 @@
 #define DEFAULT_COLLECTIONS_FILE	"collections_publications.txt"
 #define DEFAULT_EMPLOYEES_FILE		"employees.txt"
 #define DEFAULT_REQUESTS_FILE		"requests.txt"
-#define DEFAULT_CURRENT_DAY			Date(24, 11, 2017)
+#define DEFAULT_CURRENT_DAY			Date(23, 11, 2017)
+
+#define DEFAULT_BOOK_QT_REQ			20
+#define DEFAULT_MAGAZINE_QT_REQ		150
+#define DEFAULT_DESCRIPTION			"Placeholder description"
+#define DEFAULT_PRICE				16.0
+#define DEFAULT_MAGAZINE_FREQ		7
+
 
 using namespace std;
 

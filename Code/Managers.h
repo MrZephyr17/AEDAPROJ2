@@ -15,16 +15,7 @@
 namespace Managers {
 namespace Aux {
 	string writeLogs(ManagerData &data);
-	//void choose_line(ManagerData &data, const Input &input);
-	//void choose_stop(ManagerData &data, const Input &input);
-	//void choose_driver(ManagerData &data, const Input &input);
 	void clear(ManagerData &data);
-	//string write(Line* line);
-	//string write(Stop* stop);
-	//string write(Driver* driver);
-	//string write_lineIDs(ManagerData &data);
-	//string write_stopIDs(ManagerData &data);
-	//string write_driverIDs(ManagerData &data);
 }
 
 void Navigator(const Page& page);
@@ -35,4 +26,9 @@ void Controller14(const Page& page);
 void Controller211(const Page& page);
 void Controller212(const Page& page);
 void Controller213(const Page& page);
+void Controller221(const Page& page);
+void Controller222(const Page& page);
+void Controller231(const Page& page);
+void Controller232(const Page& page);
+void Controller233(const Page& page);
 }

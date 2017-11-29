@@ -1,6 +1,14 @@
 Sabado ; Magazine ; 1
-7 ; Revista semanal da Cofina ; 2 ; 5 ; 22-11-2017 ; 11,0
+7 ; Revista semanal da Cofina ; 2 ; 5 ; 22-11-2017 ; 11.000000
 
 Grandes Livros ; Book ; 8
-Os Lusiadas ; Epico de Luis de Camoes ; 10-05-2015 ; 15,99
-Os Maias ; Obra de Eca de Queiros ; 15-07-2016 ; 14,98
+Os Lusiadas ; Epico de Luis de Camoes ; 10-05-2015 ; 15.990000
+Os Maias ; Obra de Eca de Queiros ; 15-07-2016 ; 14.980000
+
+Uma Aventura ; Book ; 7
+
+Jornal de Noticias ; Magazine ; 3
+7 ; Placeholder description ; 1 ; 1 ; 22-11-2017 ; 16.000000
+
+Diario ; Magazine ; 1
+7 ; Placeholder description ; 1 ; 1 ; 23-11-2017 ; 16.000000

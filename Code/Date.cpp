@@ -1,5 +1,6 @@
 #include "Date.h"
 #include "Supplements.h"
+#include <iostream>
 
 namespace Months {
 	constexpr Date::Month January = 1;
@@ -18,7 +19,7 @@ namespace Months {
 
 bool Date::validDate(const Date& date)
 {
-	return date.day > 0 && date.day <= numberOfDaysInMonth(date.month, date.year);
+	return (date.day > 0) && (date.day <= numberOfDaysInMonth(date.month, date.year));
 }
 
 std::string Date::string_month(Month month)
@@ -46,7 +47,10 @@ Date::Date(Day d, Month m, Year y) :
 	day(d), month(m), year(y)
 {
 	if (!validDate(*this)) {
-		throw InvalidDate(*this);
+		auto d = InvalidDate(*this);
+		cout << d.day << endl;
+		cout << d.month << endl;
+		cout << d.year << endl;
 	}
 }
 

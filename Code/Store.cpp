@@ -1,6 +1,7 @@
 #include "Store.h"
 
 #include "Company.h"
+#include "Collection.h"
 #include "Employee.h"
 #include "Request.h"
 #include "Publication.h"
@@ -9,10 +10,8 @@
 
 #include "Supplements.h"
 
+#include <algorithm>
 
-
-PublicationLog::PublicationLog(unsigned int stock) :
-	stock(stock) {}
 
 PublicationLog::PublicationLog(unsigned int stock, map<Date, unsigned int> sales) :
 	stock(stock), sales(sales) {}
@@ -33,6 +32,7 @@ Store::Store(string info, Company* comp) :
 	vector<string> firstLine = split(separated.at(0), FILE_ITEM_SEPARATOR);
 	this->name = trim(firstLine.at(0));
 	this->contact = trim(firstLine.at(1));
+	manager = NULL;
 
 	for (auto it = separated.begin() + 1; it != separated.end(); it++) {
 		vector<string> line = split(*it, FILE_ITEM_SEPARATOR);
@@ -125,6 +125,11 @@ void Store::setManager(Employee* newManager)
 	manager = newManager;
 }
 
+bool Store::noStock() const
+{
+	return stock.empty();
+}
+
 void Store::addToStock(Publication* publ, unsigned int s)
 {
 	getPubl(publ)->second.stock += s;
@@ -157,23 +162,34 @@ void Store::addPublication(Publication* publ, unsigned int st)
 
 	PublicationLog p(st);
 
-	stock.insert(pair<Publication*, PublicationLog>(publ, st));
-	
+	stock[publ] = p;
+	// stock.insert(pair<Publication* const, PublicationLog>(publ, st));
 }
 
 void Store::addCollection(Collection* collection)
 {
-	// ...
+	auto publications = collection->getAllPublications();
+	for (auto p : publications) addPublication(p, 0);
 }
 
-void Store::makeRequest(Publication* publ) const
+void Store::makeRequest(Publication* publ)
 {
-	// ...
+	if (publ->getCollection()->getType() == TYPE_BOOK)
+	{
+		Request* request = new Request(company, publ, this, DEFAULT_BOOK_QT_REQ);
+		company->addRequest(request);
+	}
+	else
+	{
+		Request* request = new Request(company, publ, this, DEFAULT_MAGAZINE_QT_REQ);
+		company->addRequest(request);
+	}
 }
 
-void Store::makeRequests(Collection* collection) const
+void Store::makeRequests(Collection* collection)
 {
-	// ...
+	auto publications = collection->getAllPublications();
+	for (auto p : publications) makeRequest(p);
 }
 
 void Store::removePublication(Publication* publ)
@@ -187,7 +203,15 @@ void Store::removePublication(Publication* publ)
 
 void Store::removeCollection(Collection* collection)
 {
-	// ...
+	auto it = stock.begin();
+	auto s = *it;
+
+	for (auto it = stock.begin(); it != stock.end();) {
+		if (it->first->getCollection() == collection)
+			it = stock.erase(it);
+		else
+			++it;
+	}
 }
 
 string Store::writeInfo() const
@@ -198,6 +222,7 @@ string Store::writeInfo() const
 	m += "Name/Local: " + name + "\n";
 	m += "Contact: " + contact + "\n";
 	m += "Manager: " + (manager ? manager->getName() : "None") + "\n";
+
 
 	for (auto it = stock.cbegin(); it != stock.cend(); ++it) {
 		m += "Publication: " + it->first->getName() + "\n";
@@ -212,15 +237,16 @@ string Store::writeInfo() const
 }
 
 string Store::writeToFile() const {
-	string str = name + FILE_ITEM_SEPARATOR + contact + FILE_LINE_SEPARATOR;
+	string space = " ";
+	string str = name + space + FILE_ITEM_SEPARATOR + space + contact + FILE_LINE_SEPARATOR;
 	for (auto it = stock.cbegin(); it != stock.cend(); ++it) {
 		Publication* publ = it->first;
 		auto& log = it->second;
-		str += publ->getName() + FILE_ITEM_SEPARATOR;
-		str += log.stock;
+		str += publ->getName() + space + FILE_ITEM_SEPARATOR + space;
+		str += to_string(log.stock);
 		for (auto s = log.sales.cbegin(); s != log.sales.cend(); ++s) {
-			str += FILE_ITEM_SEPARATOR + s->first.write();
-			str	+= DEFAULT_PAIR_SEPARATOR + to_string(s->second);
+			str += space + FILE_ITEM_SEPARATOR + space + (s->first.write());
+			str	+= space + DEFAULT_PAIR_SEPARATOR + space + (to_string(s->second));
 		}
 		str += FILE_LINE_SEPARATOR;
 	}

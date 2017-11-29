@@ -46,12 +46,12 @@ void Company::init() {
 	// ** 3. Interactive Menu **
 	menu->init("", "4.");
 
-	// ** 4. Exit. Save everything **
+	// ** 4. Exit & Save **
 	{
 		saveCollectionsToFile();
-		//saveStoresToFile();
-		//saveEmployeesToFile();
-		//saveRequestsToFile();
+		saveStoresToFile();
+		saveEmployeesToFile();
+		saveRequestsToFile();
 		cout << menu->writeLog();
 		cout << "Program terminated successfully...." << endl;
 	}
@@ -221,5 +221,53 @@ void Company::initMenu() {
 		text += encaps(" § (2.1.3) Remove Store § ", MAIN_WIDTH, '=') + "\n";
 
 		menu->pages["2.1.3."] = Page("2.1.", text, menu, Managers::Controller213); // mudar 
+	}
+
+	// Page 2.2.1
+	{
+		string text = header;
+		text += encaps(" § (2.2.1) Add Employee § ", MAIN_WIDTH, '=') + "\n";
+
+		menu->pages["2.2.1."] = Page("2.2.", text, menu, Managers::Controller221); // mudar 
+	}
+
+	// Page 2.2.2
+	{
+		string text = header;
+		text += encaps(" § (2.2.2) Remove Employee § ", MAIN_WIDTH, '=') + "\n";
+
+		menu->pages["2.2.2."] = Page("2.2.", text, menu, Managers::Controller222); // mudar 
+	}
+
+	//Page 2.3.1
+	{
+		string text = header;
+		text += encaps(" § (2.3.1) Add Collection § ", MAIN_WIDTH, '=') + "\n";
+
+		menu->pages["2.3.1."] = Page("2.3.", text, menu, Managers::Controller231); // mudar 
+	}
+
+	// Page 2.3.2
+	{
+		string text = header;
+		text += encaps(" § (2.3.2) Edit Collection § ", MAIN_WIDTH, '=') + "\n";
+
+		menu->pages["2.3.2."] = Page("2.3.", text, menu, Managers::Controller232); // mudar 
+	}
+
+	// Page 2.3.3
+	{
+		string text = header;
+		text += encaps(" § (2.3.3) Remove Collection § ", MAIN_WIDTH, '=') + "\n";
+
+		menu->pages["2.3.3."] = Page("2.3.", text, menu, Managers::Controller233); // mudar 
+	}
+
+	// Page 4.
+	{
+		string text = header;
+		text += encaps(" § (4) Exit & Save § ", MAIN_WIDTH, '=') + "\n";
+		text += "\n";
+		menu->pages["4."] = Page("", text, menu, Managers::Navigator);
 	}
 }

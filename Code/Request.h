@@ -3,6 +3,9 @@
 #include "Classes.h"
 #include "Date.h"
 
+/**
+* @brief It has the info about a given publication that is asked by a store and its quantity among other atributes
+*/
 class Request
 {
 private:
@@ -62,6 +65,10 @@ public:
 	unsigned int getQuantity() const;
 
 	// Sets
+	/**
+	* @brief Replaces the selected store to a new store
+	* @param store the new store.
+	*/
 	void changeStore(Store* store);
 
 	// Operations
@@ -85,6 +92,8 @@ public:
 	 * @return a string containing information of the request
 	 */ 
 	string writeToFile() const;
+
+	bool operator<(const Request& r2);
 
 };
 

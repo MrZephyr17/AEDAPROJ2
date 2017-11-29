@@ -248,9 +248,7 @@ void Company::getRequestsFile(bool output) {
 
 
 
-/*
-PROBLEMA : FUNCAO DE IR BUSCAR A PUBLICACAO
- */
+
 void Company::readStoresFile() {
 	ifstream file(storesFileName);
 	assert(file.is_open());

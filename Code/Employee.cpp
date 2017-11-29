@@ -9,6 +9,7 @@
 Employee::Employee(string info, Company* company) :
 	company(company)
 {
+
 	vector<string> separated = split(info, FILE_ITEM_SEPARATOR);
 	name = trim(separated.at(0));
 	birthDate = Date(trim(separated.at(1)));
@@ -18,6 +19,8 @@ Employee::Employee(string info, Company* company) :
 		storeName = trim(separated.at(2));
 		store = company->getStore(storeName);
 	}
+	else
+		store = NULL;
 }
 
 Employee::Employee(Company* company, string name, Date birthDate) :
@@ -50,6 +53,7 @@ void Employee::setBirthDate(Date newBirthDate)
 
 void Employee::setStore(Store* newStore)
 {
+	if (newStore != nullptr) newStore->setManager(this);
 	store = newStore;
 }
 
@@ -65,8 +69,9 @@ string Employee::writeInfo() const
 } 
 
 string Employee::writeToFile() const {
-	string str = name + FILE_ITEM_SEPARATOR;
-	str += birthDate.write() + FILE_ITEM_SEPARATOR;
-	str += store->getName() + FILE_LINE_SEPARATOR;
+	string space = " ";
+	string str = name + space + FILE_ITEM_SEPARATOR + space;
+	str += birthDate.write();
+	str += (store ? (space + FILE_ITEM_SEPARATOR + space + store->getName()) : "") + FILE_LINE_SEPARATOR;
 	return str;
 }
