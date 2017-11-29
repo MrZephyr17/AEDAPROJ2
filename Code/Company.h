@@ -336,6 +336,26 @@ public:
 	*/
 	string writeEmployees();
 
+	/**
+	 * @brief Sorts productionPlan by requestDate.
+	 */ 
+	void sortRequests();
+ 
+ 	/**
+	 * @brief Sorts stores by name.
+	 */ 
+	void sortStores();
+
+	/**
+	 * @brief Sorts collections by name.
+	 */ 
+	void sortCollections();
+
+	/**
+	 * @brief Sorts employees by name.
+	 */ 
+	void sortEmployees();
+
 	// Operations
 	//void updateRequests();
 	//void sendStock(vector<Request*> ready);

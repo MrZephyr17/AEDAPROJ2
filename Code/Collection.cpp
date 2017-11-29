@@ -92,8 +92,10 @@ string Collection::writeToFile() const {
 	return str;
 }
 
-
-
+ 
+bool Collection::operator<(const Collection& c2){
+	return name<c2.getName(); 
+}
 
 
 BookCollection::BookCollection(Company* company, string name, string type, unsigned int time) :

@@ -56,7 +56,9 @@ DuplicateElement<T>::DuplicateElement(T* el) :
 template<class T>
 string DuplicateElement<T>::message()
 {
-	string m = "Shit";  //"That element of type " + (typeid(*duplicate).name()) + " already exists!\n";
+	string type = typeid(*duplicate).name();
+
+	string m = "That element of type " + type + " already exists!\n";
 
 	return m;
 }

@@ -9,6 +9,7 @@
 #include "Supplements.h"
 
 #include <algorithm>
+#include <iterator>
 #include <iostream>
 #include <fstream>
 //#include <cstdlib>
@@ -19,7 +20,7 @@
 void Company::addStore(Store* newS)
 {
 	for (auto it = stores.cbegin(); it != stores.cend(); ++it) {
-		if (*it == newS) throw DuplicateElement<Store>(newS);
+		if ((*it)->getName() == newS->getName()) throw DuplicateElement<Store>(newS);
 	}
 	stores.push_back(newS);
 
@@ -33,7 +34,7 @@ void Company::addStore(Store* newS)
 void Company::addCollection(Collection* newC)
 {
 	for (auto it = collections.cbegin(); it != collections.cend(); ++it) {
-		if (*it == newC) throw DuplicateElement<Collection>(newC);
+		if ((*it)->getName() == newC->getName()) throw DuplicateElement<Collection>(newC);
 	}
 	collections.push_back(newC);
 
@@ -46,7 +47,7 @@ void Company::addCollection(Collection* newC)
 void Company::addEmployee(Employee* newE)
 {
 	for (auto it = employees.cbegin(); it != employees.cend(); ++it) {
-		if (*it == newE) throw DuplicateElement<Employee>(newE);
+		if ((*it)->getName() == newE->getName()) throw DuplicateElement<Employee>(newE);
 	}
 	employees.push_back(newE);
 }
@@ -297,6 +298,22 @@ string Company::writeEmployees()
 	m += "\n";
 
 	return m;
+}
+
+void Company::sortRequests(){
+	sort(productionPlan.begin(),productionPlan.end());
+}
+ 
+void Company::sortStores(){
+	sort(stores.begin(),stores.end());
+}
+
+void Company::sortCollections(){
+	sort(collections.begin(),collections.end());
+}
+
+void Company::sortEmployees(){
+	sort(employees.begin(),employees.end());
 }
 
 /*

@@ -137,6 +137,7 @@ void Store::addToStock(Publication* publ, unsigned int s)
 
 bool Store::sellPublication(Publication* publ, unsigned int quantity)
 {
+	//update PublicationLog
 	unsigned int& stock = getPubl(publ)->second.stock;
 	if (stock < quantity) {
 		stock = 0;
@@ -251,4 +252,8 @@ string Store::writeToFile() const {
 		str += FILE_LINE_SEPARATOR;
 	}
 	return str;
+}
+
+bool Store::operator<(const Store& s2){
+	return name<s2.getName();
 }

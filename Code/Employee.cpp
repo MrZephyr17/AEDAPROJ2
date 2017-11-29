@@ -75,3 +75,7 @@ string Employee::writeToFile() const {
 	str += (store ? (space + FILE_ITEM_SEPARATOR + space + store->getName()) : "") + FILE_LINE_SEPARATOR;
 	return str;
 }
+
+bool Employee::operator<(const Employee &e2){
+	return name < e2.getName();
+}

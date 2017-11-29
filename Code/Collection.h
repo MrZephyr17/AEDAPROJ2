@@ -120,6 +120,9 @@ public:
 	* @return the string with the information
 	*/
 	virtual string writeToFile() const;
+
+	bool operator<(const Collection& c2);
+
 };
 
 /**
@@ -354,4 +357,5 @@ public:
 	* @return All publications
 	*/
 	vector<Publication*> getAllPublications() const;
+
 };

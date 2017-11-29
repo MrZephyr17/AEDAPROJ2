@@ -195,5 +195,7 @@ public:
 	 * @return a string containing information of the store
 	 */ 
 	string writeToFile() const;
+
+	bool operator<(const Store& s2);
 };
 

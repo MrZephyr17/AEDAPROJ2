@@ -91,5 +91,7 @@ public:
 	* @return a string containing information of the employee
 	*/
 	string writeToFile() const;
+
+	bool operator<(const Employee &e2);
 };
 
