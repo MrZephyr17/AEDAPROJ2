@@ -113,6 +113,20 @@ void Company::removeStore(Store *store)
 		cout << it->writeInfo();
 }
 
+string writeRequests()
+{
+	string m;
+
+	m = "Current requests\n";
+
+	for (auto it = requests.begin(); it != requests.end(); it++)
+		m += (*it)->writeInfo() + "\n";
+
+	m += "\n";
+
+	return m;
+}
+
 string Company::writeRequests(Publication *pub)
 {
 	string res;
@@ -122,6 +136,20 @@ string Company::writeRequests(Publication *pub)
 			res += (*it)->writeInfo() + "\n";
 
 	return res;
+}
+
+string writeRequest(Request *req)
+{
+	string m;
+
+	for (auto it = productionPlan.begin(); it != productionPlan.end(); it++)
+		if ((*it) == req)
+			m = (*it)->writeInfo();
+
+	if (m.empty())
+		throw(NonExistentElement<Request>(req));
+
+	return m;
 }
 
 void Company::removeCollection(Collection *collection)
@@ -367,6 +395,19 @@ bool Company::changeRequestDeliveryLimit(Request *req, Date newLimit)
 		return false;
 	}
 }
+
+Request* Company::getRequest(string storeName, string publicationName) const
+{
+	for(auto it=productionPlan.cbegin();it!=productionPlan.cend();it++)
+	{
+		if((*it)->getPublication()->getName() == publicationName &&
+		(*it)->getStore()->getName() == storeName)
+		return (*it);
+	}
+
+	return nullptr;
+}
+
 
 /*
 vector<Publication *> Company::getPublications() const
