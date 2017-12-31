@@ -25,10 +25,12 @@ void Controller13(const Page& page);
 void Controller14(const Page& page);
 void Controller211(const Page& page);
 void Controller212(const Page& page);
-void Controller213(const Page& page);
-void Controller221(const Page& page);
 void Controller222(const Page& page);
 void Controller231(const Page& page);
 void Controller232(const Page& page);
 void Controller233(const Page& page);
+void Controller311(const Page& page);
+void Controller312(const Page& page);
+void Controller313(const Page& page);
+void Controller32(const Page& page);
 }

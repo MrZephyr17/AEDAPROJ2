@@ -80,13 +80,13 @@ void Company::initMenu() {
 	// Page 0.
 	{
 		string text = header;
-		text += encaps(" § Main Menu § ", MAIN_WIDTH, '=') + "\n";
+		text += encaps(" ï¿½ Main Menu ï¿½ ", MAIN_WIDTH, '=') + "\n";
 		text += "  ** \n";
 		text += "  **  1. Lookup information on stores, publications, and more.\n";
 		text += "  ** \n";
 		text += "  **  2. Edit data on stores and employees, and create books and collections.\n";
 		text += "  ** \n";
-		text += "  **  3. (For part 2).\n";
+		text += "  **  3. Manage requests.\n";
 		text += "  ** \n";
 		text += "  **  4. Save & Exit.\n";
 		text += "  ** \n\n";
@@ -98,7 +98,7 @@ void Company::initMenu() {
 	// Page 1.
 	{
 		string text = header;
-		text += encaps(" § (1) Lookup information on stores, publications, and more § ", MAIN_WIDTH, '=') + "\n";
+		text += encaps(" ï¿½ (1) Lookup information on stores, publications, and more ï¿½ ", MAIN_WIDTH, '=') + "\n";
 		text += "  ** \n";
 		text += "  **  1. List of stores; sales and other information per store.\n";
 		text += "  ** \n";
@@ -114,7 +114,7 @@ void Company::initMenu() {
 	// Page 1.1.
 	{
 		string text = header;
-		text += encaps(" § (1.1) List of stores; sales and other information per store § ", MAIN_WIDTH, '=') + "\n";
+		text += encaps(" ï¿½ (1.1) List of stores; sales and other information per store ï¿½ ", MAIN_WIDTH, '=') + "\n";
 
 		menu->pages["1.1."] = Page("1.", text, menu, Managers::Controller11); //mudar
 	}
@@ -122,7 +122,7 @@ void Company::initMenu() {
 	//Page 1.2
 	{
 		string text = header;
-		text += encaps(" § (1.2) List of collections available § ", MAIN_WIDTH, '=') + "\n";
+		text += encaps(" ï¿½ (1.2) List of collections available ï¿½ ", MAIN_WIDTH, '=') + "\n";
 
 		menu->pages["1.2."] = Page("1.", text, menu, Managers::Controller12); // mudar 
 	}
@@ -130,7 +130,7 @@ void Company::initMenu() {
 	//Page 1.3
 	{
 		string text = header;
-		text += encaps(" § (1.2) List of employees § ", MAIN_WIDTH, '=') + "\n";
+		text += encaps(" ï¿½ (1.2) List of employees ï¿½ ", MAIN_WIDTH, '=') + "\n";
 
 		menu->pages["1.3."] = Page("1.", text, menu, Managers::Controller13); // mudar 
 	}
@@ -138,7 +138,7 @@ void Company::initMenu() {
 	//Page 2.
 	{
 		string text = header;
-		text+= encaps(" § (2) Edit data on stores and employees, and create books and collections § ", MAIN_WIDTH, '=') + "\n";
+		text+= encaps(" ï¿½ (2) Edit data on stores and employees, and create books and collections ï¿½ ", MAIN_WIDTH, '=') + "\n";
 		text += "  ** \n";
 		text += "  **  1. Edit stores.\n";
 		text += "  ** \n";
@@ -155,7 +155,7 @@ void Company::initMenu() {
 	//Page 2.1
 	{
 		string text = header;
-		text+= encaps(" § (2.1) Edit stores § ", MAIN_WIDTH, '=') + "\n";
+		text+= encaps(" ï¿½ (2.1) Edit stores ï¿½ ", MAIN_WIDTH, '=') + "\n";
 		text += "  ** \n";
 		text += "  **  1. Add store.\n";
 		text += "  ** \n";
@@ -171,7 +171,7 @@ void Company::initMenu() {
 	//Page 2.2
 	{
 		string text = header;
-		text += encaps(" § (2.2) Edit employees § ", MAIN_WIDTH, '=') + "\n";
+		text += encaps(" ï¿½ (2.2) Edit employees ï¿½ ", MAIN_WIDTH, '=') + "\n";
 		text += "  ** \n";
 		text += "  **  1. Add employee.\n";
 		text += "  ** \n";
@@ -186,7 +186,7 @@ void Company::initMenu() {
 	//Page 2.3
 	{
 		string text = header;
-		text += encaps(" § (2.3) Edit collections § ", MAIN_WIDTH, '=') + "\n";
+		text += encaps(" ï¿½ (2.3) Edit collections ï¿½ ", MAIN_WIDTH, '=') + "\n";
 		text += "  ** \n";
 		text += "  **  1. Add collection.\n";
 		text += "  ** \n";
@@ -202,7 +202,7 @@ void Company::initMenu() {
 	// Page 2.1.1
 	{
 		string text = header;
-		text += encaps(" § (2.1.1) Add Store § ", MAIN_WIDTH, '=') + "\n";
+		text += encaps(" ï¿½ (2.1.1) Add Store ï¿½ ", MAIN_WIDTH, '=') + "\n";
 
 		menu->pages["2.1.1."] = Page("2.1.", text, menu, Managers::Controller211); // mudar 
 	}
@@ -210,7 +210,7 @@ void Company::initMenu() {
 	// Page 2.1.2
 	{
 		string text = header;
-		text += encaps(" § (2.1.2) Edit Store § ", MAIN_WIDTH, '=') + "\n";
+		text += encaps(" ï¿½ (2.1.2) Edit Store ï¿½ ", MAIN_WIDTH, '=') + "\n";
 
 		menu->pages["2.1.2."] = Page("2.1.", text, menu, Managers::Controller212); // mudar 
 	}
@@ -218,7 +218,7 @@ void Company::initMenu() {
 	// Page 2.1.3
 	{
 		string text = header;
-		text += encaps(" § (2.1.3) Remove Store § ", MAIN_WIDTH, '=') + "\n";
+		text += encaps(" ï¿½ (2.1.3) Remove Store ï¿½ ", MAIN_WIDTH, '=') + "\n";
 
 		menu->pages["2.1.3."] = Page("2.1.", text, menu, Managers::Controller213); // mudar 
 	}
@@ -226,7 +226,7 @@ void Company::initMenu() {
 	// Page 2.2.1
 	{
 		string text = header;
-		text += encaps(" § (2.2.1) Add Employee § ", MAIN_WIDTH, '=') + "\n";
+		text += encaps(" ï¿½ (2.2.1) Add Employee ï¿½ ", MAIN_WIDTH, '=') + "\n";
 
 		menu->pages["2.2.1."] = Page("2.2.", text, menu, Managers::Controller221); // mudar 
 	}
@@ -234,7 +234,7 @@ void Company::initMenu() {
 	// Page 2.2.2
 	{
 		string text = header;
-		text += encaps(" § (2.2.2) Remove Employee § ", MAIN_WIDTH, '=') + "\n";
+		text += encaps(" ï¿½ (2.2.2) Remove Employee ï¿½ ", MAIN_WIDTH, '=') + "\n";
 
 		menu->pages["2.2.2."] = Page("2.2.", text, menu, Managers::Controller222); // mudar 
 	}
@@ -242,7 +242,7 @@ void Company::initMenu() {
 	//Page 2.3.1
 	{
 		string text = header;
-		text += encaps(" § (2.3.1) Add Collection § ", MAIN_WIDTH, '=') + "\n";
+		text += encaps(" ï¿½ (2.3.1) Add Collection ï¿½ ", MAIN_WIDTH, '=') + "\n";
 
 		menu->pages["2.3.1."] = Page("2.3.", text, menu, Managers::Controller231); // mudar 
 	}
@@ -250,7 +250,7 @@ void Company::initMenu() {
 	// Page 2.3.2
 	{
 		string text = header;
-		text += encaps(" § (2.3.2) Edit Collection § ", MAIN_WIDTH, '=') + "\n";
+		text += encaps(" ï¿½ (2.3.2) Edit Collection ï¿½ ", MAIN_WIDTH, '=') + "\n";
 
 		menu->pages["2.3.2."] = Page("2.3.", text, menu, Managers::Controller232); // mudar 
 	}
@@ -258,15 +258,82 @@ void Company::initMenu() {
 	// Page 2.3.3
 	{
 		string text = header;
-		text += encaps(" § (2.3.3) Remove Collection § ", MAIN_WIDTH, '=') + "\n";
+		text += encaps(" ï¿½ (2.3.3) Remove Collection ï¿½ ", MAIN_WIDTH, '=') + "\n";
 
 		menu->pages["2.3.3."] = Page("2.3.", text, menu, Managers::Controller233); // mudar 
+	}
+
+
+	// Page 3.
+	{
+		string text = header;
+		text += encaps(" ï¿½ (3) Manage requests ï¿½ ", MAIN_WIDTH, '=') + "\n";
+		text += "  ** \n";
+		text += "  **  1. Edit requests.\n";
+		text += "  ** \n";
+		text += "  **  2. List requests.\n";
+		text += "  ** \n";
+		text += "  **  3. ...\n";
+		text += "  ** \n";
+		text += "  **  4. .....\n";
+		text += "  ** \n";
+		menu->pages["3."] = Page("", text, menu, Managers::Navigator);
+	}
+
+	// Page 3.1
+	{
+		string text = header;
+		text += encaps(" ï¿½ (3.1) Edit requests ï¿½ ", MAIN_WIDTH, '=') + "\n";
+		text += "  ** \n";
+		text += "  **  1. Add request.\n";
+		text += "  ** \n";
+		text += "  **  2. Cancel request.\n";
+		text += "  ** \n";
+		text += "  **  3. Change request's delivery date.\n";
+		text += "  ** \n";
+		text += "  **  4. .....\n";
+		text += "  ** \n";
+		menu->pages["3.1"] = Page("3.", text, menu, Managers::Navigator); 
+	}
+
+	// Page 3.1.1
+	{
+		string text = header;
+		text += encaps(" ï¿½ (3.1.1) Add request ï¿½ ", MAIN_WIDTH, '=') + "\n";
+
+		menu->pages["3.1.1."] = Page("3.1.", text, menu, Managers::Controller311); // mudar 
+	}
+
+	
+	// Page 3.1.2
+	{
+		string text = header;
+		text += encaps(" ï¿½ (3.1.2) Cancel request ï¿½ ", MAIN_WIDTH, '=') + "\n";
+
+		menu->pages["3.1.2."] = Page("3.1.", text, menu, Managers::Controller312); // mudar 
+	}
+
+	// Page 3.1.3
+	{
+		string text = header;
+		text += encaps(" ï¿½ (3.1.3) Change request's delivery date ï¿½ ", MAIN_WIDTH, '=') + "\n";
+
+		menu->pages["3.1.3."] = Page("3.1.", text, menu, Managers::Controller313); // mudar 
+	}
+
+
+	// Page 3.2
+	{
+		string text = header;
+		text += encaps(" ï¿½ (3.2) List requests ï¿½ ", MAIN_WIDTH, '=') + "\n";
+
+		menu->pages["3.2"] = Page("3.", text, menu, Managers::Controller32); 
 	}
 
 	// Page 4.
 	{
 		string text = header;
-		text += encaps(" § (4) Exit & Save § ", MAIN_WIDTH, '=') + "\n";
+		text += encaps(" ï¿½ (4) Exit & Save ï¿½ ", MAIN_WIDTH, '=') + "\n";
 		text += "\n";
 		menu->pages["4."] = Page("", text, menu, Managers::Navigator);
 	}

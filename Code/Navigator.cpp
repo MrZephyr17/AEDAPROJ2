@@ -776,4 +776,306 @@ namespace Managers {
 
 
 	}
+
+	namespace {
+		bool validName(string name){
+			return name.size() < 50 && isalpha(name[0]);
+		}
+		bool validQuantity(unsigned int quantity) {
+			return quantity > 0 && quantity < 100;
+		}
+		bool validDeliveryDate(string deliveryDate) {
+			auto a = deliveryDate.find_first_of('-');
+			if (a != string::npos) {
+				auto b = deliveryDate.find_first_of('-', a);
+				if (b != string::npos) return true;
+		}
+		return false;
+	}
+	}
+
+	void Controller311(const Page& page)
+	{
+		ManagerData data(page);
+		string storeName, publicationName, deliveryDate;
+		unsigned int quantity = 0;
+
+		data.instructions += "Ctrl+Z = Leave to page " + page.father + "\n";
+		data.instructions += "Write the name of the Store that is making the request.\n";
+		data.instructions += "Write the name of the Publication you want to request.\n";
+		data.instructions += "Specify the delivery limit date.\n";
+		data.instructions += "Finally, write the quantity.\n";
+
+		do {
+			// 1. Write Page Content
+			{
+				cout << page.mainContent << endl;
+
+				// Write Page Content
+				cout << "Request Information" << endl;
+				cout << "Store: " << storeName << endl;
+				cout << "Publication: " << publicationName << endl;
+				cout << "Delivery limit: " << deliveryDate << endl;
+				cout << "Quantity: " << quantity << endl << endl;
+
+				cout << Aux::writeLogs(data);
+				Aux::clear(data);
+			}
+
+			// 2. Wait User input
+			Input input = data.reader.extract();
+
+			// 3. Check User input
+			if (input.is.ctrlZ) {
+				data.nextPage = page.father;
+				data.leave = true;
+			}
+			if (input.is.freeEnter) {
+				try {
+					Store* store = data.company->getStore(storeName);
+					Publication* publication = data.company->getPublication(publicationName);
+					Request* request = new Request(data.company, publication, store, quantity, Date(deliveryDate));
+					data.company->addRequest(request);
+					storeName.clear(); publicationName.clear(); deliveryDate.clear();
+				}
+				catch (Date::InvalidDate &date) {
+					data.errorLog = "Invalid date given.";
+					birthDate.clear();
+				}
+				catch(NameNotFound &e){
+					data.errorLog = e.message;
+				}
+				catch (DuplicateElement<Request> &s) {
+					data.errorLog = s.message();
+				}
+			}
+			if (input.is.integer) {
+				if(validQuantity(input.integer))
+					quantity = input.integer;
+				else
+					data.errorLog = "Invalid integer data.";
+			}
+			if (input.is.plainText) {
+				if (validDeliveryDate(input.plainText))
+					deliveryDate = input.plainText;
+					//distinguir store e publication?
+				else if (validName(input.plainText))
+					storeName = input.plainText;
+				else if (validName(input.plainText))
+					publicationName = input.plainText;
+				else
+					data.errorLog = "Invalid data.";
+			}
+
+			system("cls");
+		} while (!data.leave);
+
+
+	}
+
+	void Controller312(const Page& page)
+	{
+		ManagerData data(page);
+		string storeName, publicationName;
+
+		data.instructions += "Ctrl+Z = Leave to page " + page.father + "\n";
+		data.instructions += "Specify the request you want to remove.\n";
+		data.instructions += "Write the publication and store's names, as requested.\n";
+
+		do {
+			// 1. Write Page Content
+			{
+				cout << page.mainContent << endl;
+
+				// Write Page Content
+				if (data.chosen.request == nullptr)
+					cout << data.company->writeRequests();
+				else {
+					cout << "You will be removing the following request" << endl << endl;
+					cout << data.company->writeRequest(data.chosen.request);
+				}
+
+
+				cout << Aux::writeLogs(data);
+				Aux::clear(data);
+			}
+
+			// 2. Wait User input
+			Input input = data.reader.extract();
+
+			// 3. Check User input
+			if (input.is.ctrlZ) {
+				data.nextPage = page.father;
+				data.leave = true;
+			}
+			if (input.is.freeEnter) {
+				try {
+					data.company->removeRequest(data.chosen.request);
+					data.chosen.request = nullptr;
+				}
+				catch (NonExistentElement<Request> &e) {
+					data.errorLog = e.message();
+				}
+			}
+			if (input.is.integer) {
+				data.errorLog = "Invalid request data.";
+			}
+			if (input.is.plainText) {
+
+				if (validName(input.plainText))
+					storeName = input.plainText;
+				else if (validName(input.plainText))
+					publicationName = input.plainText;
+				
+				try {
+					data.chosen.request = data.company->getRequest(storeName, publicationName);
+					data.infoLog = "Selected request.";
+				}
+				catch (NameNotFound &e) {
+					data.errorLog = e.message();
+				}
+			}
+
+			system("cls");
+		} while (!data.leave);
+
+
+	}
+
+	void Controller313(const Page& page)
+	{
+		ManagerData data(page);
+		string storeName, publicationName, deliveryDate;
+
+		data.instructions += "Ctrl+Z = Leave to page " + page.father + "\n";
+		data.instructions += "Specify the request you want to edit.\n";
+		data.instructions += "Write the publication and store's names, as requested.\n";
+		data.instructions += "Then, write the new delivery date.\n";
+
+		do {
+			// 1. Write Page Content
+			{
+				cout << page.mainContent << endl;
+
+				// Write Page Content
+				if (data.chosen.request == nullptr){
+
+					cout << "Publication: " << publicationName << endl;
+					cout << "Store: " << storeName << endl << endl;
+
+					cout << data.company->writeRequests();
+				}
+				else {
+					cout << "Here's the request you selected." << endl << endl;
+					cout << data.company->writeRequest(data.chosen.request);
+
+					cout << "New delivery date: " << << endl;
+				}
+
+				cout << Aux::writeLogs(data);
+				Aux::clear(data);
+			}
+
+			// 2. Wait User input
+			Input input = data.reader.extract();
+
+			// 3. Check User input
+			if (input.is.ctrlZ) {
+				data.nextPage = page.father;
+				data.leave = true;
+			}
+			if (input.is.freeEnter) {
+				try{
+					data.company->changeRequestDeliveryLimit(data.chosen.request, Date(deliveryDate));
+					deliveryDate.clear();
+				}
+				catch (Date::InvalidDate &date) {
+					data.errorLog = "Invalid date given.";
+					birthDate.clear();
+				}
+				catch (NonExistentElement<Request> &e){
+					data.errorLog = e.message();
+				}
+			}
+			if (input.is.integer) {
+					data.errorLog = "Invalid request data.";
+			}
+			if (input.is.plainText) {
+
+				if (validName(input.plainText))
+					storeName = input.plainText;
+				else if (validName(input.plainText))
+					publicationName = input.plainText;
+				else if(validDeliveryDate(input.plainText))
+					deliveryDate = input.plainText;
+				
+				try {
+					data.chosen.request = data.company->getRequest(storeName, publicationName);
+					data.infoLog = "Selected request.";
+				}
+				catch (NameNotFound &e) {
+					data.errorLog = e.message();
+				}
+			}
+
+			system("cls");
+		} while (!data.leave);
+
+
+	}
+
+	void Controller32(const Page& page)
+	{
+		ManagerData data(page);
+		string publicationName;
+
+		data.instructions += "Ctrl+Z = Leave to page " + page.father + "\n";
+		data.instructions += "Write a publication name to filter requests.\n";
+		data.instructions += "Write nothing to unselect that publication.\n";
+
+		do {
+			// 1. Write Page Content
+			{
+				cout << page.mainContent << endl;
+
+				// Write Page Content ?????????????
+				if (data.chosen.employee != nullptr)
+					cout << data.company->writeEmployee(data.chosen.employee);
+				else
+					cout << data.company->writeEmployees();
+
+				cout << Aux::writeLogs(data);
+				Aux::clear(data);
+			}
+
+			// 2. Wait User input
+			Input input = data.reader.extract();
+
+			// 3. Check User input
+			if (input.is.ctrlZ) {
+				data.nextPage = page.father;
+				data.leave = true;
+			}
+			if (input.is.freeEnter) {
+				data.chosen.employee = nullptr;
+				data.infoLog = "Showing information for all requests.";
+			}
+			if (input.is.integer) {
+				data.errorLog = "Expected a string for a publication name.";
+			}
+			if (input.is.plainText) {
+				try {
+					data.chosen.employee = data.company->getEmployee(input.plainText);
+					data.infoLog = "Showing requests for publication " + input.plainText + ".";
+				}
+				catch (NameNotFound &e) {
+					data.errorLog = e.message();
+				}
+			}
+
+			system("cls");
+		} while (!data.leave);
+
+
+	}
 }

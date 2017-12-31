@@ -2,6 +2,7 @@
 
 #include "Classes.h"
 #include "Date.h"
+
 /**
 * @brief The class harbors all the information about the collections,employees,stores and requests.
 */
@@ -254,7 +255,13 @@ class Company
 	*/
 	vector<Request *> getRequests(const Store *store) const;
 
+	Request *getRequest(string storeName, string publicationName) const;
+
 	string writeRequests(Publication *pub);
+	
+	string writeRequests();
+
+	string writeRequest(Request *req);
 
 	/**
 	* @brief Gets the vector of requests from the provided publication.

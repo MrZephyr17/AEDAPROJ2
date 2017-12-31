@@ -5,6 +5,8 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <unordered_set>
+#include <priority_queue>
 
 #define MAIN_WIDTH					105 /* > 60 */
 #define MAX_WIDTH					130 /* > MAIN_WIDTH */
