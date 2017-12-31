@@ -6,12 +6,22 @@
 /**
 * @brief The class harbors all the information about the collections,employees,stores and requests.
 */
+
+template <typename T>
+struct PComp
+{
+	bool operator()(const T* a, const T* b) const
+	{
+		return *a < *b;
+	}
+}
+
 class Company
 {
   private:
 	vector<Store *> stores;
 	vector<Employee *> employees;
-	set<Request *> productionPlan;
+	set<Request *, PComp<Request> > productionPlan;
 	vector<Collection *> collections;
 	string storesFileName, collectionsFileName, employeesFileName, requestsFileName;
 
