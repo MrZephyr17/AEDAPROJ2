@@ -10,8 +10,7 @@
 
 #include <iostream>
 
-Request::Request(string info, Company* company) :
-	company(company)
+Request::Request(string info, Company *company) : company(company)
 {
 	vector<string> separated = split(info, FILE_ITEM_SEPARATOR);
 
@@ -22,19 +21,18 @@ Request::Request(string info, Company* company) :
 	store = company->getStore(storeName);
 
 	requestDate = Date(trim(separated.at(2)));
-	
+
 	quantity = stoi(separated.at(3));
 }
 
-Request::Request(Company* company, Publication* publ, Store* store, unsigned int quantity) :
-	company(company), publication(publ), store(store), quantity(quantity), requestDate(company->today()) {}
+Request::Request(Company *company, Publication *publ, Store *store, unsigned int quantity, Date limit) : company(company), publication(publ), store(store), quantity(quantity), requestDate(company->today()), deliveryLimit(limit) {}
 
-Publication* Request::getPublication() const
+Publication *Request::getPublication() const
 {
 	return publication;
 }
 
-Store* Request::getStore() const
+Store *Request::getStore() const
 {
 	return store;
 }
@@ -49,9 +47,14 @@ unsigned int Request::getQuantity() const
 	return quantity;
 }
 
-void Request::changeStore(Store* newStore)
+void Request::changeStore(Store *newStore)
 {
 	store = newStore;
+}
+
+void Request::setDeliveryLimit(Date newLimit)
+{
+	deliveryLimit = newLimit;
 }
 
 /*
@@ -76,6 +79,7 @@ string Request::writeInfo() const
 	m += "Publication: " + publication->getName() + "\n";
 	m += "Store: " + store->getName() + "\n";
 	m += "Request date: " + requestDate.write() + "\n";
+	m += "Delivery limit: " + deliveryLimit.write() + "\n";
 	m += "Quantity: " + to_string(quantity) + "\n\n";
 
 	return m;
@@ -91,7 +95,10 @@ string Request::writeToFile() const
 	return str;
 }
 
-bool Request::operator<(const Request& r2)
+bool Request::operator<(const Request &r2)
 {
-	return requestDate < r2.getRequestDate();
+	if (publication == r2.getPublication())
+		return quantity < r2.getQuantity();
+	else
+		return publication < r2.getPublication();
 }

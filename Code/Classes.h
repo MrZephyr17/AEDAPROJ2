@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 
 #define MAIN_WIDTH					105 /* > 60 */
 #define MAX_WIDTH					130 /* > MAIN_WIDTH */

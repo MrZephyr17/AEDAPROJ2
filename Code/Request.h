@@ -13,6 +13,7 @@ private:
 	Publication* publication;
 	Store* store;
 	Date requestDate;
+	Date deliveryLimit;
 	unsigned int quantity;
 
 public:
@@ -36,7 +37,7 @@ public:
 	 * @param store A pointer to the store that is requesting more stock.
 	 * @param quantity The number of publications to be produced.
 	 */ 
-	Request(Company* company, Publication* publ, Store* store, unsigned int quantity);
+	Request(Company* company, Publication* publ, Store* store, unsigned int quantity, Date limit);
 	
 	// Gets
 
@@ -92,6 +93,8 @@ public:
 	 * @return a string containing information of the request
 	 */ 
 	string writeToFile() const;
+
+	void setDeliveryLimit(Date newLimit);
 
 	bool operator<(const Request& r2);
 

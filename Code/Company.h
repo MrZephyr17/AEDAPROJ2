@@ -7,20 +7,20 @@
 */
 class Company
 {
-private:
-	vector<Store*> stores;
-	vector<Employee*> employees;
-	vector<Request*> productionPlan;
-	vector<Collection*> collections;
+  private:
+	vector<Store *> stores;
+	vector<Employee *> employees;
+	set<Request *> productionPlan;
+	vector<Collection *> collections;
 	string storesFileName, collectionsFileName, employeesFileName, requestsFileName;
 
-	Menu* menu;
+	Menu *menu;
 	Date currentDay = DEFAULT_CURRENT_DAY;
 
-public:
+  public:
 	// ~Company();
 
-	// (Init.cpp) 
+	// (Init.cpp)
 	/**
 	* @brief  Main function inside Company object.
 	*
@@ -151,48 +151,47 @@ public:
 	* @brief  Add newly created store and update all other stores.
 	* @param newS the new Store to be added.
 	*/
-	void addStore(Store* newS);
+	void addStore(Store *newS);
 
 	/**
 	* @brief  Add newly created collection and update all other collections.
 	* @param newC the new Collection to be added.
 	*/
-	void addCollection(Collection* newC);
+	void addCollection(Collection *newC);
 	/**
 	* @brief  Add newly created employee and update all other employees.
 	* @param newE the new Employee to be added.
 	*/
-	void addEmployee(Employee* newE);
+	void addEmployee(Employee *newE);
 	/**
 	* @brief  Add newly created request and update all other requests.
 	* @param newR the new Request to be added.
 	*/
-	void addRequest(Request* newR);
+	bool addRequest(Request *newR);
 
 	// (Company.cpp) Remove existing object and update all other objects.
 	// Incomplete
-
 
 	/**
 	* @brief  Remove existing store and update all other stores.
 	* @param store the Store to be removed.
 	*/
-	void removeStore(Store* store);
+	void removeStore(Store *store);
 	/**
 	* @brief  Remove existing collection and update all other collections.
 	* @param collection the Collection to be removed.
 	*/
-	void removeCollection(Collection* collection);
+	void removeCollection(Collection *collection);
 	/**
 	* @brief  Remove existing employee and update all other employees.
 	* @param employee the Employee to be removed.
 	*/
-	void removeEmployee(Employee* employee);
+	void removeEmployee(Employee *employee);
 	/**
 	* @brief  Remove existing request and update all other requests.
 	* @param request the Request to be removed.
 	*/
-	void removeRequest(Request* request);
+	bool removeRequest(Request *request);
 
 	// (Company.cpp) Gets
 
@@ -206,7 +205,7 @@ public:
 	* @param The name of the store to get.
 	* @return The address of the store with the given name.
 	*/
-	Store* getStore(string name) const;
+	Store *getStore(string name) const;
 
 	/**
 	* @brief Gets a collection with the provided name.
@@ -218,7 +217,7 @@ public:
 	* @param The name of the collection to get.
 	* @return The address of the collection with the given name.
 	*/
-	Collection* getCollection(string name) const;
+	Collection *getCollection(string name) const;
 
 	/**
 	* @brief Gets a publication with the provided name.
@@ -230,7 +229,7 @@ public:
 	* @param The name of the publication to get.
 	* @return The address of the publication with the given name.
 	*/
-	Publication* getPublication(string name) const;
+	Publication *getPublication(string name) const;
 
 	/**
 	* @brief Gets an employee with the provided name.
@@ -242,7 +241,7 @@ public:
 	* @param The name of the employee to get.
 	* @return The address of the employee with the given name.
 	*/
-	Employee* getEmployee(string name) const;
+	Employee *getEmployee(string name) const;
 	/**
 	* @brief Gets the vector of requests from the provided store.
 	*
@@ -253,7 +252,10 @@ public:
 	* @param The store of which we wil pull the vector.
 	* @return The vector of requests adresses that the store contains
 	*/
-	vector<Request*> getRequests(const Store* store) const;
+	vector<Request *> getRequests(const Store *store) const;
+
+	string writeRequests(Publication *pub);
+
 	/**
 	* @brief Gets the vector of requests from the provided publication.
 	*
@@ -264,7 +266,7 @@ public:
 	* @param The publication of which we wil pull the vector.
 	* @return The vector of requests adresses that the publication contains
 	*/
-	vector<Request*> getRequests(const Publication* publ) const;
+	vector<Request *> getRequests(const Publication *publ) const;
 	/**
 	* @brief Gets the vector of requests from the provided collection.
 	*
@@ -275,7 +277,7 @@ public:
 	* @param The publication of which we wil pull the vector.
 	* @return The vector of requests adresses that the publication contains
 	*/
-	vector<Request*> getRequests(const Collection* collection) const;
+	vector<Request *> getRequests(const Collection *collection) const;
 	/**
 	* @brief this function returns the in-game date of the program
 	* returns the current date.
@@ -298,7 +300,7 @@ public:
 	* @param st the store which information we want to display.
 	* @return a string containing the information of the provided store.
 	*/
-	string writeStore(Store* st);
+	string writeStore(Store *st);
 
 	/**
 	* @brief Writes to a string the information of a given collection.
@@ -309,7 +311,7 @@ public:
 	* @param col the collection which information we want to display.
 	* @return a string containing the information of the provided collection.
 	*/
-	string writeCollection(Collection* col);
+	string writeCollection(Collection *col);
 
 	/**
 	* @brief Writes to a string a list of all of the collections.
@@ -327,7 +329,7 @@ public:
 	* @param emp the employee which information we want to display.
 	* @return a string containing the information of the provided employee.
 	*/
-	string writeEmployee(Employee* emp);
+	string writeEmployee(Employee *emp);
 
 	/**
 	* @brief Writes to a string a list of all of the employees.
@@ -338,23 +340,25 @@ public:
 
 	/**
 	 * @brief Sorts productionPlan by requestDate.
-	 */ 
+	 */
 	void sortRequests();
- 
- 	/**
+
+	/**
 	 * @brief Sorts stores by name.
-	 */ 
+	 */
 	void sortStores();
 
 	/**
 	 * @brief Sorts collections by name.
-	 */ 
+	 */
 	void sortCollections();
 
 	/**
 	 * @brief Sorts employees by name.
-	 */ 
+	 */
 	void sortEmployees();
+
+	bool changeRequestDeliveryLimit(Request *req, Date newLimit);
 
 	// Operations
 	//void updateRequests();

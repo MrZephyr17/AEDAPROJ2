@@ -15,61 +15,72 @@
 //#include <cstdlib>
 //#include <typeinfo>
 
-
-
-void Company::addStore(Store* newS)
+void Company::addStore(Store *newS)
 {
-	for (auto it = stores.cbegin(); it != stores.cend(); ++it) {
-		if ((*it)->getName() == newS->getName()) throw DuplicateElement<Store>(newS);
+	for (auto it = stores.cbegin(); it != stores.cend(); ++it)
+	{
+		if ((*it)->getName() == newS->getName())
+			throw DuplicateElement<Store>(newS);
 	}
 	stores.push_back(newS);
 
 	if (newS->noStock())
-		for (auto it = collections.begin(); it != collections.end(); ++it) {
+		for (auto it = collections.begin(); it != collections.end(); ++it)
+		{
 			newS->addCollection(*it);
 			newS->makeRequests(*it);
 		}
 }
 
-void Company::addCollection(Collection* newC)
+void Company::addCollection(Collection *newC)
 {
-	for (auto it = collections.cbegin(); it != collections.cend(); ++it) {
-		if ((*it)->getName() == newC->getName()) throw DuplicateElement<Collection>(newC);
+	for (auto it = collections.cbegin(); it != collections.cend(); ++it)
+	{
+		if ((*it)->getName() == newC->getName())
+			throw DuplicateElement<Collection>(newC);
 	}
 	collections.push_back(newC);
 
-	for (auto it = stores.begin(); it != stores.end(); ++it) {
+	for (auto it = stores.begin(); it != stores.end(); ++it)
+	{
 		(*it)->addCollection(newC);
 		//(*it)->makeRequests(newC);
 	}
 }
 
-void Company::addEmployee(Employee* newE)
+void Company::addEmployee(Employee *newE)
 {
-	for (auto it = employees.cbegin(); it != employees.cend(); ++it) {
-		if ((*it)->getName() == newE->getName()) throw DuplicateElement<Employee>(newE);
+	for (auto it = employees.cbegin(); it != employees.cend(); ++it)
+	{
+		if ((*it)->getName() == newE->getName())
+			throw DuplicateElement<Employee>(newE);
 	}
 	employees.push_back(newE);
 }
 
-void Company::addRequest(Request* newR)
+bool Company::addRequest(Request *newR)
 {
-	for (auto it = productionPlan.cbegin(); it != productionPlan.cend(); ++it) {
-		if (*it == newR) throw DuplicateElement<Request>(newR);
-	}
-	productionPlan.push_back(newR);
+	auto search = productionPlan.find(newR);
 
-	sort(productionPlan.begin(), productionPlan.end());
+	if (search == productionPlan.end())
+	{
+		productionPlan.insert(newR);
+
+		return true;
+	}
+	else
+	{
+		throw DuplicateElement<Request>(newR);
+		return false;
+	}
 }
 
-
-
-void Company::removeStore(Store* store)
+void Company::removeStore(Store *store)
 {
-	productionPlan.erase(remove_if(productionPlan.begin(), productionPlan.end(), [&store](Request* req)
-	{
-		return req->getStore() == store;
-	}), productionPlan.end());
+	productionPlan.erase(remove_if(productionPlan.begin(), productionPlan.end(), [&store](Request *req) {
+							 return req->getStore() == store;
+						 }),
+						 productionPlan.end());
 	/*
 	for (auto it = productionPlan.begin(); it != productionPlan.end(); ++it) {
 		if ((*it)->getStore() == store) {
@@ -83,31 +94,47 @@ void Company::removeStore(Store* store)
 	*/
 	cout << "fixe\n";
 
-	if (store->getEmployee() != nullptr) {
+	if (store->getEmployee() != nullptr)
+	{
 		store->getEmployee()->setStore(nullptr);
 	}
 
-	for (auto it = stores.begin(); it != stores.end(); ++it) {
-		if (*it == store) {
+	for (auto it = stores.begin(); it != stores.end(); ++it)
+	{
+		if (*it == store)
+		{
 			delete store;
 			stores.erase(it);
 			break;
 		}
 	}
 
-	for (auto it : stores) cout << it->writeInfo();
+	for (auto it : stores)
+		cout << it->writeInfo();
 }
 
-void Company::removeCollection(Collection* collection)
+string Company::writeRequests(Publication *pub)
 {
-	for (auto it = stores.begin(); it != stores.end(); ++it) {
+	string res;
+
+	for(auto it = productionPlan.cbegin(); it != productionPlan.cend(); it++)
+		if((*it)->getPublication() == pub)
+			res += (*it)->writeInfo() + "\n";
+
+	return res;
+}
+
+void Company::removeCollection(Collection *collection)
+{
+	for (auto it = stores.begin(); it != stores.end(); ++it)
+	{
 		(*it)->removeCollection(collection);
 	}
 
-	productionPlan.erase(remove_if(productionPlan.begin(), productionPlan.end(), [&collection](Request* req)
-	{
-		return req->getPublication()->getCollection() == collection;
-	}), productionPlan.end());
+	productionPlan.erase(remove_if(productionPlan.begin(), productionPlan.end(), [&collection](Request *req) {
+							 return req->getPublication()->getCollection() == collection;
+						 }),
+						 productionPlan.end());
 	/*
 	for (auto it = productionPlan.begin(); it != productionPlan.end(); ++it) {
 		if ((*it)->getPublication()->getCollection() == collection) {
@@ -119,8 +146,10 @@ void Company::removeCollection(Collection* collection)
 		}
 	}
 	*/
-	for (auto it = collections.begin(); it != collections.end(); ++it) {
-		if (*it == collection) {
+	for (auto it = collections.begin(); it != collections.end(); ++it)
+	{
+		if (*it == collection)
+		{
 			delete collection;
 			collections.erase(it);
 			break;
@@ -128,11 +157,13 @@ void Company::removeCollection(Collection* collection)
 	}
 }
 
-void Company::removeEmployee(Employee* employee)
+void Company::removeEmployee(Employee *employee)
 {
 	employee->setStore(nullptr);
-	for (auto it = employees.begin(); it != employees.end(); ++it) {
-		if (*it == employee) {
+	for (auto it = employees.begin(); it != employees.end(); ++it)
+	{
+		if (*it == employee)
+		{
 			delete employee;
 			employees.erase(it);
 			break;
@@ -140,67 +171,72 @@ void Company::removeEmployee(Employee* employee)
 	}
 }
 
-void Company::removeRequest(Request* request)
+bool Company::removeRequest(Request *request)
 {
-	for (auto it = productionPlan.begin(); it != productionPlan.end(); ++it) {
-		if (*it == request) {
-			delete request;
-			productionPlan.erase(it);
-			break;
-		}
+	auto search = productionPlan.find(request);
+
+	if (search != productionPlan.end())
+	{
+		delete request;
+		productionPlan.erase(search);
+
+		return true;
+	}
+	else
+	{
+		throw(NonExistentElement<Request>(request));
+		return false;
 	}
 }
 
-
-
-
-
-Store* Company::getStore(string name) const
+Store *Company::getStore(string name) const
 {
 	return getObject(name, stores);
 }
 
-Collection* Company::getCollection(string name) const
+Collection *Company::getCollection(string name) const
 {
 	return getObject(name, collections);
 }
 
-Publication* Company::getPublication(string name) const
+Publication *Company::getPublication(string name) const
 {
-	for (unsigned i = 0; i < collections.size(); i++) {
-		Publication* publ = collections.at(i)->getPublication(name);
-		if (publ != nullptr) return publ;
+	for (unsigned i = 0; i < collections.size(); i++)
+	{
+		Publication *publ = collections.at(i)->getPublication(name);
+		if (publ != nullptr)
+			return publ;
 	}
 
 	return nullptr;
 }
 
-Employee* Company::getEmployee(string name) const
+Employee *Company::getEmployee(string name) const
 {
 	return getObject(name, employees);
 }
 
-vector<Request*> Company::getRequests(const Store* store) const
+vector<Request *> Company::getRequests(const Store *store) const
 {
-	vector<Request*> reqs;
+	vector<Request *> reqs;
 	copy_if(productionPlan.begin(), productionPlan.end(), back_inserter(reqs),
-		[&store](Request* request) { return request->getStore() == store; });
+			[&store](Request *request) { return request->getStore() == store; });
 	return reqs;
 }
 
-vector<Request*> Company::getRequests(const Publication* publ) const
+vector<Request *> Company::getRequests(const Publication *publ) const
 {
-	vector<Request*> reqs;
+	vector<Request *> reqs;
 	copy_if(productionPlan.begin(), productionPlan.end(), back_inserter(reqs),
-		[&publ](Request* request) { return request->getPublication() == publ; });
+			[&publ](Request *request) { return request->getPublication() == publ; });
 	return reqs;
 }
 
-vector<Request*> Company::getRequests(const Collection* collection) const
+vector<Request *> Company::getRequests(const Collection *collection) const
 {
-	vector<Request*> reqs;
+	vector<Request *> reqs;
 	copy_if(productionPlan.begin(), productionPlan.end(), back_inserter(reqs),
-		[&collection](Request* request) { return request->getPublication()->getCollection() == collection; });
+			[&collection](Request *request) { return request->getPublication()->getCollection() == collection; });
 	return reqs;
 }
 
@@ -209,39 +245,36 @@ Date Company::today() const
 	return currentDay;
 }
 
-
-
-
 string Company::writeStores()
 {
 	string m;
 
 	m = "Currently ICNM holds the following stores\n";
 
-		for (auto it = stores.begin(); it != stores.end(); it++)
-			m += (*it)->getName() + "\n";
+	for (auto it = stores.begin(); it != stores.end(); it++)
+		m += (*it)->getName() + "\n";
 
 	m += "\n";
 
 	return m;
 }
 
-string Company::writeStore(Store* st)
+string Company::writeStore(Store *st)
 {
 	string m;
 
 	for (auto it = stores.begin(); it != stores.end(); it++)
 		if ((*it) == st)
-			m=(*it)->writeInfo();
+			m = (*it)->writeInfo();
 
-	if(m.empty())
+	if (m.empty())
 		throw(NonExistentElement<Store>(st));
-
 
 	return m;
 }
 
-string Company::writeCollection(Collection* col) {
+string Company::writeCollection(Collection *col)
+{
 
 	string m;
 
@@ -252,11 +285,10 @@ string Company::writeCollection(Collection* col) {
 	if (m.empty())
 		throw(NonExistentElement<Collection>(col));
 
-
 	return m;
-
 }
-string Company::writeCollections() {
+string Company::writeCollections()
+{
 
 	string m;
 
@@ -270,7 +302,7 @@ string Company::writeCollections() {
 	return m;
 }
 
-string Company::writeEmployee(Employee* emp)
+string Company::writeEmployee(Employee *emp)
 {
 	string m;
 
@@ -280,7 +312,6 @@ string Company::writeEmployee(Employee* emp)
 
 	if (m.empty())
 		throw(NonExistentElement<Employee>(emp));
-
 
 	return m;
 }
@@ -300,20 +331,41 @@ string Company::writeEmployees()
 	return m;
 }
 
-void Company::sortRequests(){
-	sort(productionPlan.begin(),productionPlan.end());
-}
- 
-void Company::sortStores(){
-	sort(stores.begin(),stores.end());
+void Company::sortRequests()
+{
+	sort(productionPlan.begin(), productionPlan.end());
 }
 
-void Company::sortCollections(){
-	sort(collections.begin(),collections.end());
+void Company::sortStores()
+{
+	sort(stores.begin(), stores.end());
 }
 
-void Company::sortEmployees(){
-	sort(employees.begin(),employees.end());
+void Company::sortCollections()
+{
+	sort(collections.begin(), collections.end());
+}
+
+void Company::sortEmployees()
+{
+	sort(employees.begin(), employees.end());
+}
+
+bool Company::changeRequestDeliveryLimit(Request *req, Date newLimit)
+{
+	auto search = productionPlan.find(req);
+
+	if (search != productionPlan.end())
+	{
+		(*search)->setDeliveryLimit(newLimit);
+
+		return true;
+	}
+	else
+	{
+		throw(NonExistentElement<Request>(req));
+		return false;
+	}
 }
 
 /*
