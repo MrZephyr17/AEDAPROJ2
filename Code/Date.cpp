@@ -162,6 +162,14 @@ unsigned int Date::numberOfDaysInYear(Year year)
 		return 365;
 }
 
+void Date::setCurrentDay()
+{
+	time_t result = time(nullptr);
+    struct tm *now = localtime(&result);
+    this->year = now->tm_year + 1900;
+   	this->month = now->tm_mon + 1;
+    this->day = now->tm_mday;
+} 
 
 Date& Date::operator++()
 {

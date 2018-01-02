@@ -8,16 +8,16 @@
 */
 class Publication
 {
-protected:
+  protected:
 	friend class Collection;
 
 	string name;
 	string description;
-	Collection* const collection;
+	Collection *const collection;
 	const Date date;
 	double price;
 
-public:
+  public:
 	// Constructors
 	/**
 	* @brief Receives discriminated parameters and creates a publication object.
@@ -27,7 +27,7 @@ public:
 	* @param date the date of the creation of the publication.
 	* @param price The price of the publication.
 	*/
-	Publication(string name, string description, Collection* collection, Date date, double price);
+	Publication(string name, string description, Collection *collection, Date date, double price);
 
 	// Gets
 	/**
@@ -44,7 +44,7 @@ public:
 	* @brief gets the collection of the the specific publication.
 	* @return the colletion of the publication.
 	*/
-	Collection* getCollection() const;
+	Collection *getCollection() const;
 	/**
 	* @brief gets the date of the the specific publication.
 	* @return the date of the publication.
@@ -81,6 +81,24 @@ public:
 	* @return a string containing information of the publication
 	*/
 	virtual string writeInfo() const;
+};  
+
+class LocalPublication
+{ 
+  private:
+	Publication* publication;
+	unsigned int stock;
+  public:
+	LocalPublication(Publication *publication, unsigned int stock);
+	LocalPublication() : publication(nullptr), stock(0);
+	Publication* getPublication() const;
+	unsigned int getStock() const;
+	void setPublication(Publication *publication);
+	void setStock(unsigned int stock);
+	void addStock(unsigned int quantity);
+
+	bool operator<(const LocalPublication& p2);
+	bool operator==(const LocalPublication& p2);
 };
 
 /**
@@ -91,7 +109,7 @@ class Book : public Publication
 	friend class BookCollection;
 	string version;
 
-public:
+  public:
 	// Constructors
 	/**
 	* @brief Receives discriminated parameters and creates a book object.
@@ -101,10 +119,10 @@ public:
 	* @param date the date of the creation of the book.
 	* @param price The price of the book.
 	*/
-	Book(string name, string description, Collection* collection, Date date, double price, string version = "Original version"); // Ou o caralho
+	Book(string name, string description, Collection *collection, Date date, double price, string version = "Original version"); // Ou o caralho
 
-																																 // Gets
-																																 /**
+	// Gets
+	/**
 																																 * @brief gets the volume of the the specific book.
 																																 * @return the version of the book.
 																																 */
@@ -124,13 +142,13 @@ public:
 */
 class Magazine : public Publication
 {
-private:
+  private:
 	friend class MagazineCollection;
 
 	const unsigned int volume;
 	const unsigned int number;
 
-public:
+  public:
 	// Constructors
 	/**
 	* @brief Receives discriminated parameters and creates a magazine object.
@@ -142,7 +160,7 @@ public:
 	* @param v The volume of the magazine.
 	* @param n The number of the magazine.
 	*/
-	Magazine(string name, string description, Collection* collection, Date date, double price, unsigned int v, unsigned int n);
+	Magazine(string name, string description, Collection *collection, Date date, double price, unsigned int v, unsigned int n);
 
 	// Gets
 	/**

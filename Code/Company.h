@@ -14,7 +14,25 @@ struct PComp
 	{
 		return *a < *b;
 	}
-}
+};
+
+struct suspendedHash
+{
+	int operator() (const RequestPtr& req) const
+	{
+		int v = 0;
+		for ( unsigned int i=0; i< req.getPublication()->getName().size(); i++ )
+		v = 37*v + req.getPublication()->getName()[i];
+		return v;
+	}
+
+	bool operator() (const RequestPtr& req1, const RequestPtr& ur2) const
+	{
+		return req1 == req2;
+	}
+};
+ 
+typedef unordered_set<RequestPtr,suspendedHash,suspendedHash> HashSuspendedRequests;
 
 class Company
 {
@@ -22,11 +40,12 @@ class Company
 	vector<Store *> stores;
 	vector<Employee *> employees;
 	set<Request *, PComp<Request> > productionPlan;
+	HashSuspendedRequests suspendedRequests;
 	vector<Collection *> collections;
 	string storesFileName, collectionsFileName, employeesFileName, requestsFileName;
 
 	Menu *menu;
-	Date currentDay = DEFAULT_CURRENT_DAY;
+	Date currentDay;
 
   public:
 	// ~Company();
@@ -377,6 +396,14 @@ class Company
 
 	bool changeRequestDeliveryLimit(Request *req, Date newLimit);
 
+	void checkRequests();
+
+	void sendProduction(Publication* publication, Store* store, unsigned int quantity) const;
+
+
+	void suspendRequest(Request* request);
+
+	void endSuspension(RequestPtr suspended);
 	// Operations
 	//void updateRequests();
 	//void sendStock(vector<Request*> ready);

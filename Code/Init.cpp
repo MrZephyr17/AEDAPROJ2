@@ -14,6 +14,7 @@
 
 void Company::init() {
 	menu = new Menu(this);
+	this->currentDay.setCurrentDay();
 
 	// ** 1. Read files in order **
 	{

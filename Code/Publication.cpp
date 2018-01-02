@@ -4,10 +4,45 @@
 
 #include <iostream>
 
+LocalPublication::LocalPublication(Publication *publication, unsigned int stock) : publication(publication), stock(stock) {}
 
+Publication *LocalPublication::getPublication() const
+{
+	return publication;
+}
 
-Publication::Publication(string name, string description, Collection* collection, Date date, double price) :
-	name(name), description(description), collection(collection), date(date), price(price) {}
+unsigned int LocalPublication::getStock() const
+{
+	return stock;
+}
+
+void LocalPublication::setPublication(Publication *publication)
+{
+	this->publication = publication;
+}
+
+void LocalPublication::setStock(unsigned int stock)
+{
+	this->stock = stock;
+}
+
+//maior ou menor?
+bool LocalPublication::operator<(const LocalPublication &p2)
+{
+	return stock > p2.getStock();
+}
+
+bool LocalPublication::operator==(const LocalPublication &p2)
+{
+	return publication == p2.getPublication() && stock == p2.getStock();
+}
+
+void LocalPublication::addStock(unsigned int quantity)
+{
+	stock += quantity;
+}
+
+Publication::Publication(string name, string description, Collection *collection, Date date, double price) : name(name), description(description), collection(collection), date(date), price(price) {}
 
 string Publication::getName() const
 {
@@ -19,7 +54,7 @@ string Publication::getDescription() const
 	return description;
 }
 
-Collection* Publication::getCollection() const
+Collection *Publication::getCollection() const
 {
 	return collection;
 }
@@ -62,12 +97,7 @@ string Publication::writeInfo() const
 	return m;
 }
 
-
-
-
-
-Book::Book(string name, string description, Collection* collection, Date date, double price, string version) :
-	Publication(name, description, collection, date, price), version(version) {}
+Book::Book(string name, string description, Collection *collection, Date date, double price, string version) : Publication(name, description, collection, date, price), version(version) {}
 
 string Book::getVersion() const
 {
@@ -82,11 +112,7 @@ string Book::writeInfo() const
 	return m;
 }
 
-
-
-
-
-Magazine::Magazine(string name, string description, Collection* collection, Date date, double price, unsigned int v, unsigned int n)
+Magazine::Magazine(string name, string description, Collection *collection, Date date, double price, unsigned int v, unsigned int n)
 	: Publication(name, description, collection, date, price), volume(v), number(n) {}
 
 unsigned int Magazine::getVolume() const

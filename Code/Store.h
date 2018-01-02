@@ -19,14 +19,14 @@ struct PublicationLog
 class Store
 {
 private:
-	typedef map<Publication*, PublicationLog>::iterator stock_it;
+	//typedef map<Publication*, PublicationLog>::iterator stock_it;
 	Company* const company;
 	Employee* manager;
 	string name;
 	string contact;
-	map<Publication*, PublicationLog> stock;
-
-	stock_it getPubl(Publication* publ);
+	//map<Publication*, PublicationLog> stock; 
+	priority_queue<LocalPublication> stock; 
+	//stock_it getPubl(Publication* publ);
 
 public:
 	// Constructors
@@ -195,6 +195,16 @@ public:
 	 * @return a string containing information of the store
 	 */ 
 	string writeToFile() const;
+
+	vector<Publication*> stockLowerThan(unsigned int n) const;
+
+	vector<LocalPublication> getPublications() const;
+
+	void receiveProduction(Publication* publication, unsigned int quantity);
+
+	LocalPublication getPublication(Publication* publication) const;
+
+	void removePublication(LocalPublication publication);
 
 	bool operator<(const Store& s2);
 };

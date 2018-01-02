@@ -116,6 +116,8 @@ public:
 	*/
 	Date& operator++();
 
+	void setCurrentDay();  
+
 	/**
 	* @brief Increments the date.
 	*

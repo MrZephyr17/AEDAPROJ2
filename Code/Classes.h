@@ -6,7 +6,8 @@
 #include <map>
 #include <set>
 #include <unordered_set>
-#include <priority_queue>
+#include <queue>
+#include <ctime>
 
 #define MAIN_WIDTH					105 /* > 60 */
 #define MAX_WIDTH					130 /* > MAIN_WIDTH */
@@ -47,8 +48,9 @@ struct PublicationLog;
 // ***** _EMPLOYEE_H_ *****
 class Employee;
 
-// ***** _REQUEST_H_ *****
+// ***** _REQUEST_H_ ***** 
 class Request;
+class RequestPtr;
 
 // ***** _COLLECTION_H_ *****
 class Collection;
@@ -56,6 +58,7 @@ class BookCollection;
 class MagazineCollection;
 
 // ***** _PUBLICATION_H_ *****
+class LocalPublication;
 class Publication;
 class Book;
 class Magazine;

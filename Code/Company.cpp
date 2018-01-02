@@ -131,8 +131,8 @@ string Company::writeRequests(Publication *pub)
 {
 	string res;
 
-	for(auto it = productionPlan.cbegin(); it != productionPlan.cend(); it++)
-		if((*it)->getPublication() == pub)
+	for (auto it = productionPlan.cbegin(); it != productionPlan.cend(); it++)
+		if ((*it)->getPublication() == pub)
 			res += (*it)->writeInfo() + "\n";
 
 	return res;
@@ -396,18 +396,62 @@ bool Company::changeRequestDeliveryLimit(Request *req, Date newLimit)
 	}
 }
 
-Request* Company::getRequest(string storeName, string publicationName) const
+Request *Company::getRequest(string storeName, string publicationName) const
 {
-	for(auto it=productionPlan.cbegin();it!=productionPlan.cend();it++)
+	for (auto it = productionPlan.cbegin(); it != productionPlan.cend(); it++)
 	{
-		if((*it)->getPublication()->getName() == publicationName &&
-		(*it)->getStore()->getName() == storeName)
-		return (*it);
+		if ((*it)->getPublication()->getName() == publicationName &&
+			(*it)->getStore()->getName() == storeName)
+			return (*it);
 	}
 
 	return nullptr;
 }
 
+void Company::checkRequests()
+{
+	for (auto it = productionPlan.begin(); it != productionPlan.end(); it++)
+	{
+		if ((*it)->getDeliveryLimit() == currentDay)
+		{
+			sendProduction((*it)->getPublication(), (*it)->getStore(), (*it)->getQuantity());
+			removeRequest((*it));
+		}
+	}
+}
+
+void Company::sendProduction(Publication *publication, Store *store, unsigned int quantity) const
+{
+	for (auto x : stores)
+		if (x == store)
+			x->receiveProduction(publication, quantity);
+}
+
+void Company::suspendRequest(Request *request)
+{
+	auto search = productionPlan.find(request);
+
+	if (search != productionPlan.end())
+	{
+		productionPlan.erase(search);
+
+		RequestPtr suspend(Request, currentDay);
+		suspendedRequests.insert(suspend);
+	}
+	else
+		throw(NonExistentElement<Request>(request));
+}
+
+void endSuspension(RequestPtr suspended)
+{
+	auto search = suspendedRequests.find(suspended);
+
+	if(search != suspendedRequests.end())
+	{
+		suspendedRequests.erase(search);
+		productionPlan.insert(suspended.getRequest());
+	}
+}
 
 /*
 vector<Publication *> Company::getPublications() const

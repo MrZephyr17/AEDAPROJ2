@@ -10,6 +10,16 @@
 
 #include <iostream>
 
+bool RequestPtr::operator==(const RequestPtr& req2) const
+{
+	return suspensionDate == req2.getSuspensionDate() && request == req2.getRequest();
+}
+
+RequestPtr::RequestPtr(Request* request, Date suspensionDate) : 
+request(request), suspensionDate(suspensionDate)
+{}
+
+
 Request::Request(string info, Company *company) : company(company)
 {
 	vector<string> separated = split(info, FILE_ITEM_SEPARATOR);
@@ -22,7 +32,9 @@ Request::Request(string info, Company *company) : company(company)
 
 	requestDate = Date(trim(separated.at(2)));
 
-	quantity = stoi(separated.at(3));
+	deliveryLimit = Date(trim(separated.at(3)));
+
+	quantity = stoi(separated.at(4));
 }
 
 Request::Request(Company *company, Publication *publ, Store *store, unsigned int quantity, Date limit) : company(company), publication(publ), store(store), quantity(quantity), requestDate(company->today()), deliveryLimit(limit) {}
@@ -66,11 +78,6 @@ bool Request::isDone() const
 }
 */
 
-void Request::conclude()
-{
-	// ...
-}
-
 string Request::writeInfo() const
 {
 	string m;
@@ -91,8 +98,14 @@ string Request::writeToFile() const
 	string str = publication->getName() + space + FILE_ITEM_SEPARATOR + space;
 	str += store->getName() + space + FILE_ITEM_SEPARATOR + space;
 	str += requestDate.write() + space + FILE_ITEM_SEPARATOR + space;
+	str += deliveryLimit.write() + space + FILE_ITEM_SEPARATOR + space;
 	str += to_string(quantity) + FILE_LINE_SEPARATOR;
 	return str;
+}
+
+Date Request::getDeliveryLimit() const
+{
+	return deliveryLimit;
 }
 
 bool Request::operator<(const Request &r2)
