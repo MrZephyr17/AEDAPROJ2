@@ -1,15 +1,27 @@
+Algarve ; 913021877
+Diario de Noticias ; 10
+Os Lusiadas ; 10
+Uma Aventura ; 10
+Monsenhor ; 10
+Sabado ; 10
+Jornal de Noticias ; 10
+Os Maias ; 10
+
 Lisboa1 ; 924565123
-Sabado ; 10 
-Os Lusiadas ; 20 
-Os Maias ; 12 
-Jornal de Noticias ; 73
-Diario de Noticias ; 37
+Sabado ; 10
+Monsenhor ; 10
+Os Maias ; 12
+Os Lusiadas ; 20
 Uma Aventura ; 24
+Diario de Noticias ; 37
+Jornal de Noticias ; 73
 
 Porto ; 961234568
-Sabado ; 10 
-Os Lusiadas ; 47
+Sabado ; 10
+Monsenhor ; 10
 Os Maias ; 12
-Jornal de Noticias ; 101
-Diario de Noticias ; 35
 Uma Aventura ; 25
+Diario de Noticias ; 35
+Os Lusiadas ; 47
+Jornal de Noticias ; 101
+

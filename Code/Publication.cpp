@@ -32,10 +32,7 @@ string LocalPublication::write() const
 {
 	string space = " ";
 
-	string info  = publication->getName() + space + FILE_ITEM_SEPARATOR + space;
-	info += stock + "\n";
-
-	return info;
+	return publication->getName() + space + FILE_ITEM_SEPARATOR + space + to_string(stock) + FILE_LINE_SEPARATOR;
 }
 
 //maior ou menor?

@@ -9,7 +9,6 @@
 Employee::Employee(string info, Company* company) :
 	company(company)
 {
-
 	vector<string> separated = split(info, FILE_ITEM_SEPARATOR);
 	name = trim(separated.at(0));
 	birthDate = Date(trim(separated.at(1)));
@@ -75,9 +74,9 @@ string Employee::writeToFile() const
 
 	string str = name + space + FILE_ITEM_SEPARATOR + space;
 	str += birthDate.write();
-	str += (store ? (space + FILE_ITEM_SEPARATOR + space + store->getName()) : "") + FILE_LINE_SEPARATOR;
+	if (store != nullptr) str += space + FILE_ITEM_SEPARATOR + space + store->getName();
 
-	return str;
+	return str + FILE_LINE_SEPARATOR;
 }
 
 bool Employee::operator<(const Employee &e2) const

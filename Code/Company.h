@@ -8,23 +8,24 @@
 
 struct suspendedHash
 {
-	int operator() (const Suspended* const& suspended) const
+	int operator() (Suspended* const& suspended) const
 	{
 		int v = 0;
 		string name = suspended->getPublication()->getName();
 
-		for (unsigned int i = 0; i < name.size(); i++)
-			v = 37 * v + name[i];
+		for (unsigned int i = 0; i < name.size(); ++i)
+			v = 37 * v + (int)name.at(i);
+
 		return v;
 	}
 
-	bool operator() (const Suspended* const& sus1, const Suspended* const& sus2) const
+	bool operator() (Suspended* const& sus1, Suspended* const& sus2) const
 	{
-		return *sus1 == *sus2;
+		return sus1 == sus2;
 	}
 };
 
-typedef unordered_set<Suspended*, suspendedHash, suspendedHash> HashSuspendedRequests;
+typedef unordered_set<Suspended*, suspendedHash/*, suspendedHash*/> HashSuspendedRequests;
 
 
 /**

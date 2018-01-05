@@ -317,6 +317,12 @@ void Company::readStoresFile() {
 			addStore(store);
 			block.clear();
 		}
+		text.clear();
+	}
+	if (trim(block).length() > 0) {
+		Store* store = new Store(trim(block), this);
+		addStore(store);
+		block.clear();
 	}
 
 	file.close();
@@ -395,6 +401,7 @@ void Company::readRequestsFile() {
 	menu->consoleLog.push_back("Requests information read from '" + requestsFileName + "'.");
 }
 
+
 void Company::readSuspendedRequestsFile() {
 	ifstream file(suspendedRequestsFileName);
 	assert(file.is_open());
@@ -423,7 +430,6 @@ void Company::saveStoresToFile() {
 	assert(file.is_open());
 
 	for (auto it = stores.cbegin(); it != stores.cend(); ++it) {
-		if (it != stores.cbegin()) file << endl;
 		file << (*it)->writeToFile();
 	}
 	file.close();
@@ -438,11 +444,10 @@ void Company::savePublicationsToFile() {
 	assert(file.is_open());
 
 	for (auto it = publications.cbegin(); it != publications.cend(); ++it) {
-		if (it != publications.cbegin()) file << endl;
 		file << (*it)->writeToFile();
 	}
 	file.close();
-	menu->consoleLog.push_back("Collections information saved to '" + publicationsFileName + "'.");
+	menu->consoleLog.push_back("Publication information saved to '" + publicationsFileName + "'.");
 }
 
 
@@ -453,7 +458,6 @@ void Company::saveEmployeesToFile() {
 	assert(file.is_open());
 
 	for (auto it = employees.cbegin(); it != employees.cend(); ++it) {
-		if (it != employees.cbegin()) file << endl;
 		file << (*it)->writeToFile();
 	}
 	file.close();
@@ -468,12 +472,12 @@ void Company::saveRequestsToFile() {
 	assert(file.is_open());
 
 	for (auto it = productionPlan.cbegin(); it != productionPlan.cend(); ++it) {
-		if (it != productionPlan.cbegin()) file << endl;
 		file << (*it)->writeToFile();
 	}
 	file.close();
 	menu->consoleLog.push_back("Requests information saved to '" + requestsFileName + "'.");
 }
+
 
 void Company::saveSuspendedRequestsToFile() {
 	getSuspendedRequestsFile(true);
@@ -482,9 +486,8 @@ void Company::saveSuspendedRequestsToFile() {
 	assert(file.is_open());
 
 	for (auto it = suspendedRequests.cbegin(); it != suspendedRequests.cend(); ++it) {
-		if (it != suspendedRequests.cbegin()) file << endl;
 		file << (*it)->writeToFile();
 	}
 	file.close();
-	menu->consoleLog.push_back("Requests information saved to '" + suspendedRequestsFileName + "'.");
+	menu->consoleLog.push_back("Suspended requests information saved to '" + suspendedRequestsFileName + "'.");
 }

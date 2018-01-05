@@ -26,11 +26,14 @@ void Company::init() {
 		getSuspendedRequestsFile();
 
 		{
+			cout << " >> CONFIRM CHOSEN FILES:" << endl;
 			cout << " Publications File: " << publicationsFileName << endl;
 			cout << " Stores File: " << storesFileName << endl;
 			cout << " Employees File: " << employeesFileName << endl;
 			cout << " Requests File: " << requestsFileName << endl;
 			cout << " Suspended Requests File: " << suspendedRequestsFileName << endl;
+
+			cin.get();
 		}
 
 		readPublicationsFile();
@@ -38,29 +41,29 @@ void Company::init() {
 		readEmployeesFile();
 		readRequestsFile();
 		readSuspendedRequestsFile();
-		for (auto it1 : publications) cout << (it1)->writeInfo();
+
 		
+		for (auto it1 : publications) cout << (it1)->writeInfo();
 		for (auto it2 : stores) cout << (it2)->writeInfo();
-
 		for (auto it3 : employees) cout << (it3)->writeInfo();
-
 		for (auto it4 : productionPlan) cout << (it4)->writeInfo();
-
 		for (auto it5 : suspendedRequests) cout << (it5)->writeInfo();
-
 		cin.get();
+		
 
 		//system("cls");
 	}
 
+	// ** 2. Update the file's data, according to current day **
 	{
-		// ....
+		checkRequests();
+		checkSuspendedRequests();
 	}
 
-	// ** 2. Initiate pages and menu **
+	// ** 3.1. Initiate pages and menu **
 	initMenu();
 
-	// ** 3. Interactive Menu **
+	// ** 3.2. Interactive Menu **
 	menu->init("", "4.");
 
 	// ** 4. Exit & Save **
@@ -70,6 +73,7 @@ void Company::init() {
 		saveEmployeesToFile();
 		saveRequestsToFile();
 		saveSuspendedRequestsToFile();
+
 		cout << menu->writeLog();
 		cout << "Program terminated successfully...." << endl;
 	}
