@@ -80,9 +80,9 @@ string Request::writeToFile() const
 	fileItem += store->getName() + space + FILE_ITEM_SEPARATOR + space;
 	fileItem += requestDate.write() + space + FILE_ITEM_SEPARATOR + space;
 	fileItem += deliveryLimit.write() + space + FILE_ITEM_SEPARATOR + space;
-	fileItem += to_string(quantity) + FILE_LINE_SEPARATOR;
+	fileItem += to_string(quantity);
 
-	return fileItem;
+	return fileItem + FILE_LINE_SEPARATOR;
 }
 
 void Request::setDeliveryLimit(Date newLimit)
@@ -137,11 +137,11 @@ string Suspended::writeToFile() const
 {
 	string space = " ";
 	string fileItem = Request::writeToFile();
-	fileItem.erase(remove(fileItem.begin(), fileItem.end(), '\n'), fileItem.end());
+	fileItem.pop_back();
 
-	fileItem += space + FILE_ITEM_SEPARATOR + suspensionDate.write() + FILE_LINE_SEPARATOR;
+	fileItem += space + FILE_ITEM_SEPARATOR + space + suspensionDate.write();
 
-	return fileItem;
+	return fileItem + FILE_LINE_SEPARATOR;
 }
 
 

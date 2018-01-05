@@ -117,7 +117,7 @@ namespace Writer {
 		string text;
 		auto stores = company->getStores();
 
-		text += encaps("Stores in ICNM", SHORT_WIDTH, '=', true) + "\n";
+		text += encaps("Stores in INCM", SHORT_WIDTH, '=', true) + "\n";
 
 		unsigned int line = 0;
 		for (auto it = stores.cbegin(); it != stores.cend(); ++it) {
@@ -187,7 +187,7 @@ namespace Writer {
 		string text;
 		auto publications = company->getPublications();
 
-		text += encaps("Publications in ICNM", SHORT_WIDTH, '=', true) + "\n";
+		text += encaps("Publications in INCM", SHORT_WIDTH, '=', true) + "\n";
 
 		unsigned int line = 0;
 		for (auto it = publications.cbegin(); it != publications.cend(); ++it) {
