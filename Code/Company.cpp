@@ -6,6 +6,7 @@
 
 #include "Exceptions.h"
 #include "Supplements.h"
+#include "Console.h"
 
 #include <algorithm>
 #include <iterator>
@@ -97,7 +98,7 @@ bool Company::addSuspendedRequest(Suspended* newSR)
 
 bool Company::editStore(Store* store, string name, unsigned int contact)
 {
-	if (!nameAvailable(name)) return false;
+	if ((store->getName() != name) && !nameAvailable(name)) return false;
 
 	auto it = stores.find(store);
 
@@ -151,8 +152,8 @@ bool Company::removeStore(Store *store)
 
 	auto it = stores.find(store);
 	if (it == stores.end()) return false;
-	delete store;
 	stores.erase(it);
+	delete store;
 
 	return true;
 }
@@ -178,8 +179,8 @@ bool Company::removePublication(Publication *publication)
 
 	auto it = publications.find(publication);
 	if (it == publications.end()) return false;
-	delete publication;
 	publications.erase(it);
+	delete publication;
 
 	return true;
 }
@@ -193,8 +194,8 @@ bool Company::removeEmployee(Employee *employee)
 
 	auto it = employees.find(employee);
 	if (it == employees.end()) return false;
-	delete employee;
 	employees.erase(it);
+	delete employee;
 
 	return true;
 }
@@ -204,8 +205,8 @@ bool Company::removeRequest(Request *request)
 {
 	auto it = productionPlan.find(request);
 	if (it == productionPlan.end()) return false;
-	delete request;
 	productionPlan.erase(it);
+	delete request;
 
 	return true;
 }
@@ -215,8 +216,8 @@ bool Company::removeSuspended(Suspended *suspended)
 {
 	auto it = suspendedRequests.find(suspended);
 	if (it == suspendedRequests.end()) return false;
-	delete suspended;
 	suspendedRequests.erase(it);
+	delete suspended;
 
 	return true;
 }
@@ -230,7 +231,7 @@ Store *Company::getStore(string name) const
 	try {
 		return getObject(name, stores);
 	}
-	catch (NameNotFound& err) {
+	catch (NameNotFound err) {
 		return nullptr;
 	}
 }
@@ -252,7 +253,7 @@ Employee *Company::getEmployee(string name) const
 	try {
 		return getObject(name, employees);
 	}
-	catch (NameNotFound& err) {
+	catch (NameNotFound err) {
 		return nullptr;
 	}
 }
@@ -379,22 +380,22 @@ bool Company::setRequestDeadline(Request* request, Date dateLimit)
 
 void Company::checkRequests()
 {
+	vector<Request*> toDelete;
 	for (auto it = productionPlan.begin(); it != productionPlan.end(); it++)
 	{
 		if ((*it)->getDeliveryLimit() <= currentDay)
 		{
 			sendProduction((*it)->getPublication(), (*it)->getStore(), (*it)->getQuantity());
-			removeRequest((*it));
+			toDelete.push_back(*it);
 		}
 	}
+	for (auto req : toDelete) removeRequest(req);
 }
 
 
 void Company::sendProduction(Publication *publication, Store *store, unsigned int quantity) const
 {
-	for (auto x : stores)
-		if (x == store)
-			x->receiveProduction(publication, quantity);
+	store->receiveProduction(publication, quantity);
 }
 
 
@@ -440,14 +441,16 @@ bool Company::endSuspension(Suspended* suspended)
 
 void Company::checkSuspendedRequests()
 {
-	for (auto it = suspendedRequests.begin(); it != suspendedRequests.end(); it++)
+	vector<Suspended*> toDelete;
+	for (auto it = suspendedRequests.begin(); it != suspendedRequests.end(); ++it)
 	{
-		if ((*it)->getSuspensionDate() + DEFAULT_REQUEST_DEADLINE >= currentDay)
+		Suspended* sus = *it;
+		if (sus->getSuspensionDate() + DEFAULT_REQUEST_DEADLINE >= currentDay)
 		{
-			delete *it;
-			suspendedRequests.erase(it);
+			toDelete.push_back(sus);
 		}
 	}
+	for (auto sus : toDelete) removeSuspended(sus);
 }
 
 

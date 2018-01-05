@@ -70,10 +70,8 @@ void Controller11(const Page& page)
 
 			// Write Page Content
 			cout << Writer::writeStores(data.company, data.chosen.store) << endl;
-
 			if (data.chosen.store != nullptr)
 				cout << Writer::writeStoreDetails(data.company, data.chosen.store);
-
 
 			cout << endl << endl;
 			cout << Aux::writeLogs(data);
@@ -236,6 +234,9 @@ void Controller14(const Page& page)
 			cout << page.mainContent << endl;
 
 			// Write Page Content
+			cout << Writer::writeStores(data.company, data.chosen.store) << endl;
+			cout << Writer::writePublications(data.company, data.chosen.publication) << endl << endl;
+
 			if (data.chosen.store != nullptr)
 				cout << Writer::writeRequests(data.company, data.chosen.store);
 			else if (data.chosen.publication != nullptr)
@@ -243,6 +244,7 @@ void Controller14(const Page& page)
 			else
 				cout << Writer::writeRequests(data.company);
 
+			cout << endl << endl;
 			cout << Aux::writeLogs(data);
 			Aux::clear(data);
 		}
@@ -303,6 +305,9 @@ void Controller15(const Page& page)
 			cout << page.mainContent << endl;
 
 			// Write Page Content
+			cout << Writer::writeStores(data.company, data.chosen.store) << endl;
+			cout << Writer::writePublications(data.company, data.chosen.publication) << endl << endl;
+
 			if (data.chosen.store != nullptr)
 				cout << Writer::writeSuspended(data.company, data.chosen.store);
 			else if (data.chosen.publication != nullptr)
@@ -310,6 +315,7 @@ void Controller15(const Page& page)
 			else
 				cout << Writer::writeSuspended(data.company);
 
+			cout << endl << endl;
 			cout << Aux::writeLogs(data);
 			Aux::clear(data);
 		}
@@ -388,8 +394,9 @@ void Controller211(const Page& page)
 				
 			cout << " >> Store Contact: ";
 			if (contact) cout << to_string(storeContact);
-			cout << endl << endl;
+			cout << endl;
 
+			cout << endl << endl;
 			cout << Aux::writeLogs(data);
 			Aux::clear(data);
 		}
@@ -489,9 +496,10 @@ void Controller212(const Page& page)
 
 				cout << " >> Store Contact: ";
 				if (contact) cout << to_string(storeContact);
-				cout << endl << endl;
+				cout << endl;
 			}
 
+			cout << endl << endl;
 			cout << Aux::writeLogs(data);
 			Aux::clear(data);
 		}
@@ -521,6 +529,7 @@ void Controller212(const Page& page)
 				if (success) {
 					data.infoLog = "Successfully editted store '" + storeName + "'.";
 					name = false; contact = false;
+					data.chosen.store = nullptr;
 				}
 				else {
 					data.errorLog = "Invalid store information: a store with the same name already exists.";
@@ -598,10 +607,11 @@ void Controller213(const Page& page)
 			cout << Writer::writeStores(data.company, data.chosen.store) << endl;
 
 			if (data.chosen.store != nullptr) {
-				cout << " >>>> You have selected the following store for removal:\n\n";
+				cout << "\n >>>> You have selected the following store for removal:\n\n";
 				cout << Writer::writeStoreDetails(data.company, data.chosen.store) << endl;
 			}
 
+			cout << endl << endl;
 			cout << Aux::writeLogs(data);
 			Aux::clear(data);
 		}
@@ -725,6 +735,7 @@ void Controller221(const Page& page)
 				}
 			}
 
+			cout << endl << endl;
 			cout << Aux::writeLogs(data);
 			Aux::clear(data);
 		}
@@ -869,13 +880,14 @@ void Controller222(const Page& page)
 			cout << page.mainContent << endl;
 
 			// Write Page Content
-			cout << Writer::writePublications(data.company, data.chosen.publication);
+			cout << Writer::writePublications(data.company, data.chosen.publication) << endl;
 
 			if (data.chosen.publication != nullptr) {
-				cout << " >>>> You have selected the following publication for removal:\n\n";
+				cout << "\n >>>> You have selected the following publication for removal:\n\n";
 				cout << Writer::writePublicationDetails(data.company, data.chosen.publication) << endl;
 			}
 
+			cout << endl << endl;
 			cout << Aux::writeLogs(data);
 			Aux::clear(data);
 		}
@@ -962,6 +974,7 @@ void Controller231(const Page& page)
 			if (name) cout << employeeName;
 			cout << endl;
 
+			cout << endl << endl;
 			cout << Aux::writeLogs(data);
 			Aux::clear(data);
 		}
@@ -1036,8 +1049,8 @@ void Controller232(const Page& page)
 			cout << page.mainContent << endl;
 
 			// Write Page Content
-			cout << Writer::writeEmployees(data.company, data.chosen.employee);
-			cout << Writer::writeStores(data.company, data.chosen.store) << endl;
+			cout << Writer::writeEmployees(data.company, data.chosen.employee) << endl;
+			cout << Writer::writeStores(data.company, data.chosen.store) << endl << endl;
 
 			if (data.chosen.employee != nullptr) {
 				cout << " >>>> Selected Employee: " << data.chosen.employee->getName() << endl;
@@ -1047,8 +1060,7 @@ void Controller232(const Page& page)
 				cout << " >>>> Selected Store: " << data.chosen.store->getName() << endl;
 			}
 
-			cout << endl;
-
+			cout << endl << endl;
 			cout << Aux::writeLogs(data);
 			Aux::clear(data);
 		}
@@ -1132,10 +1144,11 @@ void Controller233(const Page& page)
 			cout << Writer::writeEmployees(data.company, data.chosen.employee) << endl;
 			
 			if (data.chosen.employee != nullptr) {
-				cout << " >>>> You have selected the following employee for removal:\n\n";
+				cout << "\n >>>> You have selected the following employee for removal:\n\n";
 				cout << Writer::writeEmployeeDetails(data.company, data.chosen.employee) << endl;
 			}
 
+			cout << endl << endl;
 			cout << Aux::writeLogs(data);
 			Aux::clear(data);
 		}
@@ -1213,8 +1226,8 @@ void Controller31(const Page& page)
 			cout << page.mainContent << endl;
 
 			// Write Page Content
-			cout << Writer::writePublications(data.company, data.chosen.publication);
 			cout << Writer::writeStores(data.company, data.chosen.store) << endl;
+			cout << Writer::writePublications(data.company, data.chosen.publication) << endl << endl;
 			
 			if (data.chosen.publication != nullptr) {
 				cout << " >>>> Chosen Publication: " << data.chosen.publication->getName() << endl;
@@ -1231,6 +1244,7 @@ void Controller31(const Page& page)
 			Date dateLimit = data.company->today() + reqDeadline;
 			cout << " >> Deadline: (" << reqDeadline << ") - Day " << dateLimit << endl;
 
+			cout << endl << endl;
 			cout << Aux::writeLogs(data);
 			Aux::clear(data);
 		}
@@ -1351,8 +1365,8 @@ void Controller32(const Page& page)
 			cout << page.mainContent << endl;
 
 			// Write Page Content
-			cout << Writer::writePublications(data.company, data.chosen.publication);
 			cout << Writer::writeStores(data.company, data.chosen.store) << endl;
+			cout << Writer::writePublications(data.company, data.chosen.publication) << endl << endl;
 
 			if (data.chosen.store == nullptr && data.chosen.publication == nullptr)
 				cout << Writer::writeRequestsNumbered(reqVector, index);
@@ -1361,12 +1375,12 @@ void Controller32(const Page& page)
 			else if (data.chosen.store != nullptr)
 				cout << Writer::writeRequestsNumbered(reqVector, data.chosen.store, index);
 
-
 			if (data.chosen.request != nullptr) {
 				cout << "\n >>>> You have selected the following request for removal:\n\n";
-				cout << Writer::writeRequest(data.company, data.chosen.request);
+				cout << Writer::writeRequest(data.company, data.chosen.request) << endl;
 			}
 
+			cout << endl << endl;
 			cout << Aux::writeLogs(data);
 			Aux::clear(data);
 		}
@@ -1400,8 +1414,9 @@ void Controller32(const Page& page)
 			}
 		}
 		if (input.is.integer) {
-			if (input.integer > 0 && input.integer <= reqVector.size()) {
-				index = input.integer;
+			unsigned uns = input.integer;
+			if (input.integer > 0 && uns <= reqVector.size()) {
+				index = uns;
 				data.chosen.request = reqVector[index - 1];
 				data.infoLog = "Chose request #" + to_string(index) + ".";
 			}
@@ -1465,6 +1480,9 @@ void Controller33(const Page& page)
 			cout << page.mainContent << endl;
 
 			// Write Page Content
+			cout << Writer::writeStores(data.company, data.chosen.store) << endl;
+			cout << Writer::writePublications(data.company, data.chosen.publication) << endl << endl;
+
 			if (data.chosen.store == nullptr && data.chosen.publication == nullptr)
 				cout << Writer::writeRequestsNumbered(reqVector, index);
 			else if (data.chosen.publication != nullptr)
@@ -1472,12 +1490,12 @@ void Controller33(const Page& page)
 			else if (data.chosen.store != nullptr)
 				cout << Writer::writeRequestsNumbered(reqVector, data.chosen.store, index);
 
-
 			if (data.chosen.request != nullptr) {
-				cout << " >>>> You have selected the following request for suspension:\n\n";
-				cout << Writer::writeRequest(data.company, data.chosen.request);
+				cout << "\n >>>> You have selected the following request for suspension:\n\n";
+				cout << Writer::writeRequest(data.company, data.chosen.request) << endl;
 			}
 
+			cout << endl << endl;
 			cout << Aux::writeLogs(data);
 			Aux::clear(data);
 		}
@@ -1511,8 +1529,9 @@ void Controller33(const Page& page)
 			}
 		}
 		if (input.is.integer) {
-			if (input.integer > 0 && input.integer <= reqVector.size()) {
-				index = input.integer;
+			unsigned uns = input.integer;
+			if (input.integer > 0 && uns <= reqVector.size()) {
+				index = uns;
 				data.chosen.request = reqVector[index - 1];
 				data.infoLog = "Chose request #" + to_string(index) + ".";
 			}
@@ -1576,6 +1595,9 @@ void Controller34(const Page& page)
 			cout << page.mainContent << endl;
 
 			// Write Page Content
+			cout << Writer::writeStores(data.company, data.chosen.store) << endl;
+			cout << Writer::writePublications(data.company, data.chosen.publication) << endl << endl;
+
 			if (data.chosen.store == nullptr && data.chosen.publication == nullptr)
 				cout << Writer::writeSuspendedNumbered(susVector, index);
 			else if (data.chosen.publication != nullptr)
@@ -1583,12 +1605,12 @@ void Controller34(const Page& page)
 			else if (data.chosen.store != nullptr)
 				cout << Writer::writeSuspendedNumbered(susVector, data.chosen.store, index);
 
-
 			if (data.chosen.suspended != nullptr) {
-				cout << " >>>> You have selected to end the suspension of the following request:\n\n";
-				cout << Writer::writeSuspended(data.company, data.chosen.suspended);
+				cout << "\n >>>> You have selected to end the suspension of the following request:\n\n";
+				cout << Writer::writeSuspended(data.company, data.chosen.suspended) << endl;
 			}
 
+			cout << endl << endl;
 			cout << Aux::writeLogs(data);
 			Aux::clear(data);
 		}
@@ -1622,8 +1644,9 @@ void Controller34(const Page& page)
 			}
 		}
 		if (input.is.integer) {
-			if (input.integer > 0 && input.integer <= susVector.size()) {
-				index = input.integer;
+			unsigned uns = input.integer;
+			if (input.integer > 0 && uns <= susVector.size()) {
+				index = uns;
 				data.chosen.suspended = susVector[index - 1];
 				data.infoLog = "Chose suspended request #" + to_string(index) + ".";
 			}
@@ -1687,6 +1710,9 @@ void Controller35(const Page& page)
 			cout << page.mainContent << endl;
 
 			// Write Page Content
+			cout << Writer::writeStores(data.company, data.chosen.store) << endl;
+			cout << Writer::writePublications(data.company, data.chosen.publication) << endl << endl;
+
 			if (data.chosen.store == nullptr && data.chosen.publication == nullptr)
 				cout << Writer::writeSuspendedNumbered(susVector, index);
 			else if (data.chosen.publication != nullptr)
@@ -1694,12 +1720,12 @@ void Controller35(const Page& page)
 			else if (data.chosen.store != nullptr)
 				cout << Writer::writeSuspendedNumbered(susVector, data.chosen.store, index);
 
-
 			if (data.chosen.suspended != nullptr) {
-				cout << " >>>> You have selected the following suspended request for removal:\n\n";
-				cout << Writer::writeSuspended(data.company, data.chosen.suspended);
+				cout << "\n >>>> You have selected the following suspended request for removal:\n\n";
+				cout << Writer::writeSuspended(data.company, data.chosen.suspended) << endl;
 			}
 
+			cout << endl << endl;
 			cout << Aux::writeLogs(data);
 			Aux::clear(data);
 		}
@@ -1733,8 +1759,9 @@ void Controller35(const Page& page)
 			}
 		}
 		if (input.is.integer) {
-			if (input.integer > 0 && input.integer <= susVector.size()) {
-				index = input.integer;
+			unsigned uns = input.integer;
+			if (input.integer > 0 && uns <= susVector.size()) {
+				index = uns;
 				data.chosen.suspended = susVector[index - 1];
 				data.infoLog = "Chose suspended request #" + to_string(index) + ".";
 			}
@@ -1802,6 +1829,9 @@ void Controller36(const Page& page)
 			cout << page.mainContent << endl;
 
 			// Write Page Content
+			cout << Writer::writeStores(data.company, data.chosen.store) << endl;
+			cout << Writer::writePublications(data.company, data.chosen.publication) << endl << endl;
+
 			if (data.chosen.store == nullptr && data.chosen.publication == nullptr)
 				cout << Writer::writeRequestsNumbered(reqVector, index);
 			else if (data.chosen.publication != nullptr)
@@ -1809,15 +1839,15 @@ void Controller36(const Page& page)
 			else if (data.chosen.store != nullptr)
 				cout << Writer::writeRequestsNumbered(reqVector, data.chosen.store, index);
 
-
 			if (data.chosen.request != nullptr) {
-				cout << " >>>> You have selected the following request for alteration:\n\n";
+				cout << "\n >>>> You have selected the following request for alteration:\n\n";
 				cout << Writer::writeRequest(data.company, data.chosen.request) << endl;
 
 				Date dateLimit = data.company->today() + reqDeadline;
 				cout << " >> New Deadline: (" << reqDeadline << ") - " << dateLimit << endl;
 			}
 
+			cout << endl << endl;
 			cout << Aux::writeLogs(data);
 			Aux::clear(data);
 		}
@@ -1856,8 +1886,9 @@ void Controller36(const Page& page)
 				reqDeadline = input.integer;
 			}
 			else {
-				if (input.integer > 0 && input.integer <= reqVector.size()) {
-					index = input.integer;
+				unsigned uns = input.integer;
+				if (input.integer > 0 && uns <= reqVector.size()) {
+					index = uns;
 					data.chosen.request = reqVector[index - 1];
 					data.infoLog = "Chose request #" + to_string(index) + ".";
 				}

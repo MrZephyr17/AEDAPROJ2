@@ -32,10 +32,7 @@ string LocalPublication::write() const
 {
 	string space = " ";
 
-	string info  = publication->getName() + space + FILE_ITEM_SEPARATOR + space;
-	info += stock + "\n";
-
-	return info;
+	return publication->getName() + space + FILE_ITEM_SEPARATOR + space + to_string(stock) + FILE_LINE_SEPARATOR;
 }
 
 //maior ou menor?
@@ -46,7 +43,7 @@ bool LocalPublication::operator<(const LocalPublication &p2) const
 
 bool LocalPublication::operator==(const LocalPublication &p2) const
 {
-	return publication == p2.getPublication() && stock == p2.getStock();
+	return publication == p2.getPublication();
 }
 
 bool LocalPublication::operator!=(const LocalPublication& p2) const

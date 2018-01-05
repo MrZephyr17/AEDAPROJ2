@@ -175,12 +175,12 @@ string Store::writeToFile() const
 {
 	vector<LocalPublication> publications = getPublications();
 	string space = " ";
-	string fileItem = name + space + FILE_ITEM_SEPARATOR + space + contact + FILE_LINE_SEPARATOR;
+	string fileItem = name + space + FILE_ITEM_SEPARATOR + space + trim(contact) + FILE_LINE_SEPARATOR;
 
-	for (const auto& x : publications)
+	for (auto x : publications)
 		fileItem += x.write();
 
-	return fileItem;
+	return fileItem + FILE_LINE_SEPARATOR;
 }
 
 bool Store::operator<(const Store &s2) const
