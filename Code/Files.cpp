@@ -3,7 +3,6 @@
 // ****************************************************************************************************
 #include "Company.h"
 #include "Store.h"
-#include "Collection.h"
 #include "Employee.h"
 #include "Request.h"
 
@@ -13,7 +12,6 @@
 
 #include <iostream>
 #include <fstream>
-
 
 
 
@@ -75,24 +73,24 @@ void Company::getStoresFile(bool output) {
 }
 
 
-void Company::getCollectionsFile(bool output) {
+void Company::getPublicationsFile(bool output) {
 	cout << menu->writeLog();
 	cout << "  (Write " << DEFAULT_SKIP_SYMBOL << " to skip opening a collections file)\n";
 	cout << "Collections information file name (press Enter for default: ";
-	cout << DEFAULT_COLLECTIONS_FILE;
+	cout << DEFAULT_PUBLICATIONS_FILE;
 	cout << "): ";
 
 	string fileName;
 	getline(cin, fileName);
 	if (cin && trim(fileName).length() == 0) {
-		fileName = DEFAULT_COLLECTIONS_FILE;
+		fileName = DEFAULT_PUBLICATIONS_FILE;
 	}
 	cin.clear();
 	if (trim(fileName) == DEFAULT_SKIP_SYMBOL) {
 		system("cls");
 		string consoleLog = "Collections information data file not read.";
 		menu->consoleLog.push_back(consoleLog);
-		collectionsFileName = DEFAULT_SKIP_SYMBOL;
+		publicationsFileName = DEFAULT_SKIP_SYMBOL;
 		return;
 	}
 
@@ -107,14 +105,14 @@ void Company::getCollectionsFile(bool output) {
 
 			getline(cin, fileName);
 			if (cin && trim(fileName).length() == 0) {
-				fileName = DEFAULT_COLLECTIONS_FILE;
+				fileName = DEFAULT_PUBLICATIONS_FILE;
 			}
 			cin.clear();
 			if (trim(fileName) == DEFAULT_SKIP_SYMBOL) {
 				system("cls");
 				string consoleLog = "Collections information data file not read.";
 				menu->consoleLog.push_back(consoleLog);
-				collectionsFileName = DEFAULT_SKIP_SYMBOL;
+				publicationsFileName = DEFAULT_SKIP_SYMBOL;
 				return;
 			}
 
@@ -128,7 +126,7 @@ void Company::getCollectionsFile(bool output) {
 	string consoleLog = "Collections information data file selected: '" + trim(fileName) + "'.";
 	menu->consoleLog.push_back(consoleLog);
 
-	collectionsFileName = trim(fileName);
+	publicationsFileName = trim(fileName);
 }
 
 
@@ -246,6 +244,62 @@ void Company::getRequestsFile(bool output) {
 }
 
 
+void Company::getSuspendedRequestsFile(bool output) {
+	cout << menu->writeLog();
+	cout << "  (Write " << DEFAULT_SKIP_SYMBOL << " to skip opening a requests file)\n";
+	cout << "Requests information file name (press Enter for default: ";
+	cout << DEFAULT_SUSPENDED_REQUESTS_FILE;
+	cout << "): ";
+
+	string fileName;
+	getline(cin, fileName);
+	if (cin && trim(fileName).length() == 0) {
+		fileName = DEFAULT_SUSPENDED_REQUESTS_FILE;
+	}
+	cin.clear();
+	if (trim(fileName) == DEFAULT_SKIP_SYMBOL) {
+		system("cls");
+		string consoleLog = "Requests information data file not read.";
+		menu->consoleLog.push_back(consoleLog);
+		requestsFileName = DEFAULT_SKIP_SYMBOL;
+		return;
+	}
+
+	fstream file(trim(fileName), output ? ios::out : ios::in);
+
+	if (!file.is_open()) {
+		do {
+			file.clear();
+			cout << "File '" + trim(fileName) + "' could not be opened.\n";
+			cout << "  (Write " << DEFAULT_SKIP_SYMBOL << " to skip opening a requests file)\n";
+			cout << "Requests information file name: ";
+
+			getline(cin, fileName);
+			if (cin && trim(fileName).length() == 0) {
+				fileName = DEFAULT_SUSPENDED_REQUESTS_FILE;
+			}
+			cin.clear();
+			if (trim(fileName) == DEFAULT_SKIP_SYMBOL) {
+				system("cls");
+				string consoleLog = "Requests information data file not read.";
+				menu->consoleLog.push_back(consoleLog);
+				requestsFileName = DEFAULT_SKIP_SYMBOL;
+				return;
+			}
+
+			file.open(trim(fileName), output ? ios::out : ios::in);
+		} while (!file.is_open());
+	}
+
+	system("cls");
+	file.close();
+
+	string consoleLog = "Requests information data file selected: '" + trim(fileName) + "'.";
+	menu->consoleLog.push_back(consoleLog);
+
+	suspendedRequestsFileName = trim(fileName);
+}
+
 
 
 
@@ -263,7 +317,6 @@ void Company::readStoresFile() {
 			addStore(store);
 			block.clear();
 		}
-
 	}
 
 	file.close();
@@ -271,54 +324,37 @@ void Company::readStoresFile() {
 }
 
 
-void Company::readCollectionsFile() {
-	ifstream file(collectionsFileName);
+void Company::readPublicationsFile() {
+	ifstream file(publicationsFileName);
 	assert(file.is_open());
 
 	while (!file.eof()) {
-		string text, block;
-		getline(file, text);
-		do {
-			block += text + "\n";
-
-			if (file.eof())
-			break;
-
-			getline(file, text);
-		} while (trim(text).length() != 0);
+		string block;
+		getline(file, block);
 
 		if (trim(block).length() > 0) {
 			try {
-				Collection* collection = new Collection(trim(block), this);
-				if (collection->getType() == TYPE_BOOK) {
-					BookCollection* bookC = new BookCollection(trim(block), this);
-					addCollection(bookC);
+				Publication* publication = new Publication(trim(block), this);
+				if (publication->getType() == TYPE_BOOK) {
+					Book* book = new Book(trim(block), this);
+					addPublication(book);
 				}
-				else if (collection->getType() == TYPE_MAGAZINE) {
-					MagazineCollection* magC = new MagazineCollection(trim(block), this);
-					addCollection(magC);
+				else if (publication->getType() == TYPE_MAGAZINE) {
+					Magazine* mag = new Magazine(trim(block), this);
+					addPublication(mag);
 				}
-				else throw MalformedFileItem<Collection>(collection, "Invalid type");
+				else throw MalformedFileItem<Publication>(publication, "Invalid type");
 
-				delete collection;
-
+				delete publication;
 			}
-			catch (MalformedFileItem<Collection> error) {
-				menu->consoleLog.push_back("Malformed collection item header (Error: " + error.message() + ")");
-				// ....
-			}
-			catch (MalformedFileItem<BookCollection> error) {
-				menu->consoleLog.push_back("Malformed book collection book list (Error: " + error.message() + ")");
-				// ....
-			}
-			catch (MalformedFileItem<MagazineCollection> error) {
-				menu->consoleLog.push_back("Malformed magazine collection magazine info (Error: " + error.message() + ")");
+			catch (MalformedFileItem<Publication> error) {
+				menu->consoleLog.push_back("Malformed publication header text (Error: " + error.message() + ")");
 				// ....
 			}
 		}
 	}
 	file.close();
-	menu->consoleLog.push_back("Collections information read from '" + collectionsFileName + "'.");
+	menu->consoleLog.push_back("Publications information read from '" + publicationsFileName + "'.");
 }
 
 
@@ -359,6 +395,23 @@ void Company::readRequestsFile() {
 	menu->consoleLog.push_back("Requests information read from '" + requestsFileName + "'.");
 }
 
+void Company::readSuspendedRequestsFile() {
+	ifstream file(suspendedRequestsFileName);
+	assert(file.is_open());
+
+	while (!file.eof()) {
+		string text;
+		getline(file, text);
+
+		if (trim(text).length() > 0) {
+			Suspended* suspended = new Suspended(trim(text), this);
+			addSuspendedRequest(suspended);
+		}
+	}
+
+	file.close();
+	menu->consoleLog.push_back("Requests information read from '" + suspendedRequestsFileName + "'.");
+}
 
 
 
@@ -378,18 +431,18 @@ void Company::saveStoresToFile() {
 }
 
 
-void Company::saveCollectionsToFile() {
-	getCollectionsFile(true);
-	ofstream file(collectionsFileName);
+void Company::savePublicationsToFile() {
+	getPublicationsFile(true);
+	ofstream file(publicationsFileName);
 	string text;
 	assert(file.is_open());
 
-	for (auto it = collections.cbegin(); it != collections.cend(); ++it) {
-		if (it != collections.cbegin()) file << endl;
+	for (auto it = publications.cbegin(); it != publications.cend(); ++it) {
+		if (it != publications.cbegin()) file << endl;
 		file << (*it)->writeToFile();
 	}
 	file.close();
-	menu->consoleLog.push_back("Collections information saved to '" + collectionsFileName + "'.");
+	menu->consoleLog.push_back("Collections information saved to '" + publicationsFileName + "'.");
 }
 
 
@@ -420,4 +473,18 @@ void Company::saveRequestsToFile() {
 	}
 	file.close();
 	menu->consoleLog.push_back("Requests information saved to '" + requestsFileName + "'.");
+}
+
+void Company::saveSuspendedRequestsToFile() {
+	getSuspendedRequestsFile(true);
+	ofstream file(suspendedRequestsFileName);
+	string text;
+	assert(file.is_open());
+
+	for (auto it = suspendedRequests.cbegin(); it != suspendedRequests.cend(); ++it) {
+		if (it != suspendedRequests.cbegin()) file << endl;
+		file << (*it)->writeToFile();
+	}
+	file.close();
+	menu->consoleLog.push_back("Requests information saved to '" + suspendedRequestsFileName + "'.");
 }

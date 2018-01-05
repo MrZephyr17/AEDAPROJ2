@@ -1,6 +1,5 @@
 #include "Company.h"
 #include "Store.h"
-#include "Collection.h"
 #include "Employee.h"
 #include "Publication.h"
 #include "Request.h"
@@ -12,53 +11,58 @@
 #include <iterator>
 #include <iostream>
 #include <fstream>
-//#include <cstdlib>
-//#include <typeinfo>
 
-void Company::addStore(Store *newS)
+
+
+bool Company::addStore(Store *newS)
 {
-	for (auto it = stores.cbegin(); it != stores.cend(); ++it)
-	{
-		if ((*it)->getName() == newS->getName())
-			throw DuplicateElement<Store>(newS);
-	}
-	stores.push_back(newS);
+	if (!nameAvailable(newS->getName())) return false;
 
-	if (newS->noStock())
-		for (auto it = collections.begin(); it != collections.end(); ++it)
-		{
-			newS->addCollection(*it);
-			newS->makeRequests(*it);
-		}
+	vector<LocalPublication> pub = newS->getPublications();
+
+	for (auto publ : publications) {
+		bool found = false;
+		for (const auto& lp : pub)
+			if (lp.getPublication() == publ) {
+				found = true; break;
+			}
+
+		if (!found) newS->addPublication(publ, DEFAULT_STOCK_VALUE);
+	}
+
+	stores.insert(newS);
+
+	return true;
 }
 
-void Company::addCollection(Collection *newC)
-{
-	for (auto it = collections.cbegin(); it != collections.cend(); ++it)
-	{
-		if ((*it)->getName() == newC->getName())
-			throw DuplicateElement<Collection>(newC);
-	}
-	collections.push_back(newC);
 
-	for (auto it = stores.begin(); it != stores.end(); ++it)
-	{
-		(*it)->addCollection(newC);
-		//(*it)->makeRequests(newC);
+bool Company::addPublication(Publication *newP)
+{
+	if (!nameAvailable(newP->getName())) return false;
+
+	for (auto store : stores) {
+		store->addPublication(newP, DEFAULT_STOCK_VALUE);
 	}
+
+	publications.insert(newP);
+
+	return true;
 }
 
-void Company::addEmployee(Employee *newE)
+
+bool Company::addEmployee(Employee *newE)
 {
-	for (auto it = employees.cbegin(); it != employees.cend(); ++it)
-	{
-		if ((*it)->getName() == newE->getName())
-			throw DuplicateElement<Employee>(newE);
-	}
-	employees.push_back(newE);
+	if (!nameAvailable(newE->getName())) return false;
+
+	employees.insert(newE);
+	if (newE->getStore() != nullptr)
+		designateEmployee(newE->getStore(), newE);
+
+	return true;
 }
 
-bool Company::addRequest(Request *newR)
+
+bool Company::addRequest(Request* newR)
 {
 	auto search = productionPlan.find(newR);
 
@@ -69,356 +73,322 @@ bool Company::addRequest(Request *newR)
 		return true;
 	}
 	else
-	{
-		throw DuplicateElement<Request>(newR);
 		return false;
-	}
 }
 
-void Company::removeStore(Store *store)
-{
-	productionPlan.erase(remove_if(productionPlan.begin(), productionPlan.end(), [&store](Request *req) {
-							 return req->getStore() == store;
-						 }),
-						 productionPlan.end());
-	/*
-	for (auto it = productionPlan.begin(); it != productionPlan.end(); ++it) {
-		if ((*it)->getStore() == store) {
-			auto li = it + 1;
-			delete *it;
-			productionPlan.erase(it);
-			if (li == productionPlan.end()) break;
-			else it = li;
-		}
-	}
-	*/
-	cout << "fixe\n";
 
-	if (store->getEmployee() != nullptr)
+bool Company::addSuspendedRequest(Suspended* newSR)
+{
+	auto search = suspendedRequests.find(newSR);
+
+	if (search == suspendedRequests.end())
 	{
-		store->getEmployee()->setStore(nullptr);
-	}
-
-	for (auto it = stores.begin(); it != stores.end(); ++it)
-	{
-		if (*it == store)
-		{
-			delete store;
-			stores.erase(it);
-			break;
-		}
-	}
-
-	for (auto it : stores)
-		cout << it->writeInfo();
-}
-
-string writeRequests()
-{
-	string m;
-
-	m = "Current requests\n";
-
-	for (auto it = requests.begin(); it != requests.end(); it++)
-		m += (*it)->writeInfo() + "\n";
-
-	m += "\n";
-
-	return m;
-}
-
-string Company::writeRequests(Publication *pub)
-{
-	string res;
-
-	for (auto it = productionPlan.cbegin(); it != productionPlan.cend(); it++)
-		if ((*it)->getPublication() == pub)
-			res += (*it)->writeInfo() + "\n";
-
-	return res;
-}
-
-string writeRequest(Request *req)
-{
-	string m;
-
-	for (auto it = productionPlan.begin(); it != productionPlan.end(); it++)
-		if ((*it) == req)
-			m = (*it)->writeInfo();
-
-	if (m.empty())
-		throw(NonExistentElement<Request>(req));
-
-	return m;
-}
-
-void Company::removeCollection(Collection *collection)
-{
-	for (auto it = stores.begin(); it != stores.end(); ++it)
-	{
-		(*it)->removeCollection(collection);
-	}
-
-	productionPlan.erase(remove_if(productionPlan.begin(), productionPlan.end(), [&collection](Request *req) {
-							 return req->getPublication()->getCollection() == collection;
-						 }),
-						 productionPlan.end());
-	/*
-	for (auto it = productionPlan.begin(); it != productionPlan.end(); ++it) {
-		if ((*it)->getPublication()->getCollection() == collection) {
-			auto li = it + 1;
-			delete *it;
-			productionPlan.erase(it);
-			if (it == productionPlan.end()) break;
-			else it = li + 1;
-		}
-	}
-	*/
-	for (auto it = collections.begin(); it != collections.end(); ++it)
-	{
-		if (*it == collection)
-		{
-			delete collection;
-			collections.erase(it);
-			break;
-		}
-	}
-}
-
-void Company::removeEmployee(Employee *employee)
-{
-	employee->setStore(nullptr);
-	for (auto it = employees.begin(); it != employees.end(); ++it)
-	{
-		if (*it == employee)
-		{
-			delete employee;
-			employees.erase(it);
-			break;
-		}
-	}
-}
-
-bool Company::removeRequest(Request *request)
-{
-	auto search = productionPlan.find(request);
-
-	if (search != productionPlan.end())
-	{
-		delete request;
-		productionPlan.erase(search);
+		suspendedRequests.insert(newSR);
 
 		return true;
 	}
 	else
-	{
-		throw(NonExistentElement<Request>(request));
 		return false;
-	}
 }
+
+
+
+
+
+bool Company::editStore(Store* store, string name, unsigned int contact)
+{
+	if (!nameAvailable(name)) return false;
+
+	auto it = stores.find(store);
+
+	store->setName(name);
+	store->setContact(to_string(contact));
+	stores.erase(it);
+	stores.insert(store);
+
+	return true;
+}
+
+
+bool Company::designateEmployee(Store* store, Employee* employee)
+{
+	if (store != nullptr) {
+		Employee* prevManager = store->getManager();
+		if (prevManager != nullptr) prevManager->setStore(nullptr);
+	}
+
+	if (employee != nullptr) {
+		Store* prevStore = employee->getStore();
+		if (prevStore != nullptr) prevStore->setManager(nullptr);
+	}
+
+	store->setManager(employee);
+	employee->setStore(store);
+
+	return true;
+}
+
+
+
+
+
+bool Company::removeStore(Store *store)
+{
+	auto requests = getRequests(store);
+	auto suspended = getSuspendedRequests(store);
+
+	for (auto it = requests.begin(); it != requests.end(); ++it) {
+		removeRequest(*it);
+	}
+	for (auto it = suspended.begin(); it != suspended.end(); ++it) {
+		removeSuspended(*it);
+	}
+	
+
+	if (store->getManager() != nullptr) {
+		store->getManager()->setStore(nullptr);
+	}
+
+	auto it = stores.find(store);
+	if (it == stores.end()) return false;
+	delete store;
+	stores.erase(it);
+
+	return true;
+}
+
+
+bool Company::removePublication(Publication *publication)
+{
+	auto requests = getRequests(publication);
+	auto suspended = getSuspendedRequests(publication);
+
+	for (auto it = requests.begin(); it != requests.end(); ++it) {
+		removeRequest(*it);
+	}
+	for (auto it = suspended.begin(); it != suspended.end(); ++it) {
+		removeSuspended(*it);
+	}
+	
+
+	for (auto it = stores.begin(); it != stores.end(); ++it) {
+		auto store = *it;
+		store->removePublication(publication);
+	}
+
+	auto it = publications.find(publication);
+	if (it == publications.end()) return false;
+	delete publication;
+	publications.erase(it);
+
+	return true;
+}
+
+
+bool Company::removeEmployee(Employee *employee)
+{
+	if (employee->getStore() != nullptr) {
+		employee->getStore()->setManager(nullptr);
+	}
+
+	auto it = employees.find(employee);
+	if (it == employees.end()) return false;
+	delete employee;
+	employees.erase(it);
+
+	return true;
+}
+
+
+bool Company::removeRequest(Request *request)
+{
+	auto it = productionPlan.find(request);
+	if (it == productionPlan.end()) return false;
+	delete request;
+	productionPlan.erase(it);
+
+	return true;
+}
+
+
+bool Company::removeSuspended(Suspended *suspended)
+{
+	auto it = suspendedRequests.find(suspended);
+	if (it == suspendedRequests.end()) return false;
+	delete suspended;
+	suspendedRequests.erase(it);
+
+	return true;
+}
+
+
+
+
 
 Store *Company::getStore(string name) const
 {
-	return getObject(name, stores);
+	try {
+		return getObject(name, stores);
+	}
+	catch (NameNotFound& err) {
+		return nullptr;
+	}
 }
 
-Collection *Company::getCollection(string name) const
-{
-	return getObject(name, collections);
-}
 
 Publication *Company::getPublication(string name) const
 {
-	for (unsigned i = 0; i < collections.size(); i++)
-	{
-		Publication *publ = collections.at(i)->getPublication(name);
-		if (publ != nullptr)
-			return publ;
+	try {
+		return getObject(name, publications);
 	}
-
-	return nullptr;
+	catch (NameNotFound& err) {
+		return nullptr;
+	}
 }
+
 
 Employee *Company::getEmployee(string name) const
 {
-	return getObject(name, employees);
+	try {
+		return getObject(name, employees);
+	}
+	catch (NameNotFound& err) {
+		return nullptr;
+	}
 }
+
+
+set<Store*, PComp<Store> > Company::getStores() const
+{
+	return stores;
+}
+
+
+set<Publication*, PComp<Publication> > Company::getPublications() const
+{
+	return publications;
+}
+
+
+set<Employee*, PComp<Employee> > Company::getEmployees() const
+{
+	return employees;
+}
+
 
 vector<Request *> Company::getRequests(const Store *store) const
 {
-	vector<Request *> reqs;
-	copy_if(productionPlan.begin(), productionPlan.end(), back_inserter(reqs),
-			[&store](Request *request) { return request->getStore() == store; });
-	return reqs;
+	vector<Request *> reqsStore;
+	copy_if(productionPlan.begin(), productionPlan.end(), back_inserter(reqsStore),
+		[&store](Request *request) { return request->getStore() == store; });
+	return reqsStore;
 }
+
 
 vector<Request *> Company::getRequests(const Publication *publ) const
 {
-	vector<Request *> reqs;
-	copy_if(productionPlan.begin(), productionPlan.end(), back_inserter(reqs),
-			[&publ](Request *request) { return request->getPublication() == publ; });
-	return reqs;
+	vector<Request *> reqsPubl;
+	copy_if(productionPlan.begin(), productionPlan.end(), back_inserter(reqsPubl),
+		[&publ](Request *request) { return request->getPublication() == publ; });
+	return reqsPubl;
 }
 
-vector<Request *> Company::getRequests(const Collection *collection) const
+
+vector<Request *> Company::getRequests(const Store* store, const Publication* publication) const
 {
 	vector<Request *> reqs;
 	copy_if(productionPlan.begin(), productionPlan.end(), back_inserter(reqs),
-			[&collection](Request *request) { return request->getPublication()->getCollection() == collection; });
+		[&store, &publication](Request* request) { return request->getStore() == store && request->getPublication() == publication; });
+
 	return reqs;
 }
+
+
+vector<Request *> Company::getRequests() const
+{
+	vector<Request *> reqsAll;
+	copy(productionPlan.begin(), productionPlan.end(), back_inserter(reqsAll));
+	return reqsAll;
+}
+
+
+vector<Suspended*> Company::getSuspendedRequests(const Store* store) const
+{
+	vector<Suspended*> suspendedStore;
+	copy_if(suspendedRequests.begin(), suspendedRequests.end(), back_inserter(suspendedStore),
+		[&store](Suspended* suspended) { return suspended->getStore() == store; });
+	return suspendedStore;
+}
+
+
+vector<Suspended*> Company::getSuspendedRequests(const Publication* publication) const
+{
+	vector<Suspended*> suspendedPubl;
+	copy_if(suspendedRequests.begin(), suspendedRequests.end(), back_inserter(suspendedPubl),
+		[&publication](Suspended* suspended) { return suspended->getPublication() == publication; });
+	return suspendedPubl;
+}
+
+
+vector<Suspended*> Company::getSuspendedRequests(const Store* store, const Publication* publication) const
+{
+	vector<Suspended*> suspended;
+	copy_if(suspendedRequests.begin(), suspendedRequests.end(), back_inserter(suspended),
+		[&store, &publication](Suspended* suspended) { return suspended->getStore() == store && suspended->getPublication() == publication; });
+	return suspended;
+}
+
+
+vector<Suspended*> Company::getSuspendedRequests() const
+{
+	vector<Suspended*> suspendedAll;
+	copy(suspendedRequests.begin(), suspendedRequests.end(), back_inserter(suspendedAll));
+	return suspendedAll;
+}
+
+
+
+
 
 Date Company::today() const
 {
 	return currentDay;
 }
 
-string Company::writeStores()
+
+bool Company::setRequestDeadline(Request* request, Date dateLimit)
 {
-	string m;
-
-	m = "Currently ICNM holds the following stores\n";
-
-	for (auto it = stores.begin(); it != stores.end(); it++)
-		m += (*it)->getName() + "\n";
-
-	m += "\n";
-
-	return m;
-}
-
-string Company::writeStore(Store *st)
-{
-	string m;
-
-	for (auto it = stores.begin(); it != stores.end(); it++)
-		if ((*it) == st)
-			m = (*it)->writeInfo();
-
-	if (m.empty())
-		throw(NonExistentElement<Store>(st));
-
-	return m;
-}
-
-string Company::writeCollection(Collection *col)
-{
-
-	string m;
-
-	for (auto it = collections.begin(); it != collections.end(); it++)
-		if ((*it) == col)
-			m = (*it)->writeInfo();
-
-	if (m.empty())
-		throw(NonExistentElement<Collection>(col));
-
-	return m;
-}
-string Company::writeCollections()
-{
-
-	string m;
-
-	m = "Currently ICNM's catalogue holds the following collections\n";
-
-	for (auto it = collections.begin(); it != collections.end(); it++)
-		m += (*it)->getName() + "\n";
-
-	m += "\n";
-
-	return m;
-}
-
-string Company::writeEmployee(Employee *emp)
-{
-	string m;
-
-	for (auto it = employees.begin(); it != employees.end(); it++)
-		if ((*it) == emp)
-			m = (*it)->writeInfo();
-
-	if (m.empty())
-		throw(NonExistentElement<Employee>(emp));
-
-	return m;
-}
-
-string Company::writeEmployees()
-{
-
-	string m;
-
-	m = "Currently ICNM employs the following individuals\n";
-
-	for (auto it = employees.begin(); it != employees.end(); it++)
-		m += (*it)->getName() + "\n";
-
-	m += "\n";
-
-	return m;
-}
-
-void Company::sortRequests()
-{
-	sort(productionPlan.begin(), productionPlan.end());
-}
-
-void Company::sortStores()
-{
-	sort(stores.begin(), stores.end());
-}
-
-void Company::sortCollections()
-{
-	sort(collections.begin(), collections.end());
-}
-
-void Company::sortEmployees()
-{
-	sort(employees.begin(), employees.end());
-}
-
-bool Company::changeRequestDeliveryLimit(Request *req, Date newLimit)
-{
-	auto search = productionPlan.find(req);
+	auto search = productionPlan.find(request);
 
 	if (search != productionPlan.end())
 	{
-		(*search)->setDeliveryLimit(newLimit);
+		Request* req = *search;
+
+		productionPlan.erase(search);
+
+		req->setDeliveryLimit(dateLimit);
+
+		productionPlan.insert(req);
 
 		return true;
 	}
-	else
-	{
-		throw(NonExistentElement<Request>(req));
-		return false;
-	}
+
+	throw(NonExistentElement<Request>(request));
 }
 
-Request *Company::getRequest(string storeName, string publicationName) const
-{
-	for (auto it = productionPlan.cbegin(); it != productionPlan.cend(); it++)
-	{
-		if ((*it)->getPublication()->getName() == publicationName &&
-			(*it)->getStore()->getName() == storeName)
-			return (*it);
-	}
-
-	return nullptr;
-}
 
 void Company::checkRequests()
 {
 	for (auto it = productionPlan.begin(); it != productionPlan.end(); it++)
 	{
-		if ((*it)->getDeliveryLimit() == currentDay)
+		if ((*it)->getDeliveryLimit() <= currentDay)
 		{
 			sendProduction((*it)->getPublication(), (*it)->getStore(), (*it)->getQuantity());
 			removeRequest((*it));
 		}
 	}
 }
+
 
 void Company::sendProduction(Publication *publication, Store *store, unsigned int quantity) const
 {
@@ -427,7 +397,8 @@ void Company::sendProduction(Publication *publication, Store *store, unsigned in
 			x->receiveProduction(publication, quantity);
 }
 
-void Company::suspendRequest(Request *request)
+
+bool Company::suspendRequest(Request *request)
 {
 	auto search = productionPlan.find(request);
 
@@ -435,181 +406,70 @@ void Company::suspendRequest(Request *request)
 	{
 		productionPlan.erase(search);
 
-		RequestPtr suspend(Request, currentDay);
+		Suspended* suspend = new Suspended(this, request->getPublication(), request->getStore(), request->getQuantity(), request->getRequestDate(), request->getDeliveryLimit(), currentDay);
 		suspendedRequests.insert(suspend);
+
+		return true;
 	}
 	else
-		throw(NonExistentElement<Request>(request));
+		return false;
 }
 
-void endSuspension(RequestPtr suspended)
+
+bool Company::endSuspension(Suspended* suspended)
 {
 	auto search = suspendedRequests.find(suspended);
 
-	if(search != suspendedRequests.end())
+	if (search != suspendedRequests.end())
 	{
 		suspendedRequests.erase(search);
-		productionPlan.insert(suspended.getRequest());
+
+		Request* original = new Request(this, suspended->getPublication(), suspended->getStore(), suspended->getQuantity(),
+			suspended->getRequestDate(), suspended->getDeliveryLimit());
+
+		removeSuspended(suspended);
+
+
+		addRequest(original);
+		return true;
 	}
-}
-
-/*
-vector<Publication *> Company::getPublications() const
-{
-	return publications;
-}
-
-vector<Store *> Company::getStores() const
-{
-	return stores;
-}
-
-void Company::addStore(Store *newS)
-{
-	if(!existsElement(newS,stores))
-		stores.push_back(newS);
-
-	else 
-		throw DuplicateElement<Store>(newS);
-}
-
-void Company::addRequest(Request *req)
-{
-	if (!existsElement(req, productionPlan))
-		productionPlan.push_back(req);
 	else
-		throw DuplicateElement<Request>();
-}
-
-void Company::addPublication(Publication *newJ)
-{
-	if(!existsElement(newJ,publications))
-		publications.push_back(newJ);
-	else
-		throw DuplicateElement<Publication>();
+		return false;
 }
 
 
-vector<Publication *> Company::searchByCollection(string collection)
+void Company::checkSuspendedRequests()
 {
-	vector<Publication *> pub;
-
-	for (vector<Publication *>::iterator it = publications.begin(); it != publications.end(); it++)
-		if ((*it)->getCollection() == collection)
-			pub.push_back(*it);
-
-	return pub;
-}
- 
-void Company::removeStore(unsigned int id)
-{
-	for (vector<Store *>::iterator it = stores.begin(); it != stores.end(); it++)
-		if ((*it)->getId() == id)
-			stores.erase(it);
-
-	throw NonExistentId(id,"Store");
-}
-
-void Company::searchPub(string name)
-{
-	vector<Publication *>::iterator pubIt;
-
-	vector<Store *> existing = searchPublication(name, pubIt);
-
-	if (existing.size() == 0)
-		cout << "That publication doesn't exist / is not currently available!";
-	else
+	for (auto it = suspendedRequests.begin(); it != suspendedRequests.end(); it++)
 	{
-		cout << "Here's the info of the publication you specified:" << endl;
-
-		(*pubIt)->showInfo();
-
-		cout << "You can find this publication in the following stores: ";
-
-		for (vector<Store *>::iterator it = existing.begin(); it != existing.end(); it++)
+		if ((*it)->getSuspensionDate() + DEFAULT_REQUEST_DEADLINE >= currentDay)
 		{
-
-			if (it != existing.begin())
-				cout << ", ";
-
-			cout << (*it)->getPlace();
+			delete *it;
+			suspendedRequests.erase(it);
 		}
 	}
 }
 
 
-
-
-
-
-vector<Store *> Company::searchPublication(string name, vector<Publication *>::iterator &pubIt)
+bool Company::nameAvailable(string name) const
 {
-	Publication *p1 = NULL;
-	vector<Store *> stores;
-
-	for (vector<Publication *>::iterator it = publications.begin(); it != publications.end(); it++)
-		if ((*it)->getName() == name)
-		{
-			pubIt = it;
-			p1 = *it;
-		}
-
-	if (p1 == NULL)
-		return stores;
-
-	for (vector<Store *>::iterator it = stores.begin(); it != stores.end(); it++)
-		if ((*it)->searchPublication(p1) != (*it)->getEnd())
-			stores.push_back(*it);
-
-	return stores;
-}
-
-
-
-/*
-void Company::updateRequests()
-{
-	for (auto it = productionPlan.begin(); it != productionPlan.end(); it++)
-	{
-
-		if ((*it)->isDone())
-		{
-			(*it)->getStore()->addToStock((*it)->getPublication(), (*it)->getQuantity());
-			//erase no vetor da stores
-			productionPlan.erase(*it);
-			it--;
-		}
+	try {
+		auto publ = getObject(name, publications);
+		return false;
 	}
-}
+	catch (NameNotFound& err) {}
 
-
-
-Employee* Company::getEmployee(unsigned int id)
-{
-	return getObject(id, employees);
-}
-
-
-Publication* getPublication(string name)
-{
-	for(auto it=publications.begin();it!=publications.end();it++){
-		if(it->getName()==name)
-			return *it;
+	try {
+		auto store = getObject(name, stores);
+		return false;
 	}
-	//excecao?
-	return NULL;
-}
+	catch (NameNotFound& err) {}
 
-
-Store* Company::getStore(string name)
-{
-	for(auto it=stores.begin();it!=stores.end();it++){
-		if(it->getName()==name)
-			return *it;
+	try {
+		auto employee = getObject(name, employees);
+		return false;
 	}
-	//excecao?
-	return NULL;
+	catch (NameNotFound& err) {}
+
+	return true;
 }
-
-
-*/

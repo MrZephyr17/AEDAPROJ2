@@ -95,9 +95,9 @@ NonExistentElement<T>::NonExistentElement(T* el)
 template<class T>
 string NonExistentElement<T>::message()
 {
-	string m;
+	string type = typeid(*element).name();
 
-	m = "That element doesn't exist!\n";
+	string m = "That element of type " + type + " doesn't exist!\n";
 
 	return m;
 }

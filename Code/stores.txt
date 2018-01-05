@@ -1,13 +1,15 @@
 Lisboa1 ; 924565123
-Sabado ; 10 ; 21-11-2017 , 10 ; 22-11-2017 , 11
-Os Lusiadas ; 20 ; 21-11-2017 , 5 ; 22-11-2017 , 2
-Os Maias ; 12 ; 21-11-2017 , 0 ; 22-11-2017 , 3
-Jornal de Noticias ; 0
-Diario ; 0
+Sabado ; 10 
+Os Lusiadas ; 20 
+Os Maias ; 12 
+Jornal de Noticias ; 73
+Diario de Noticias ; 37
+Uma Aventura ; 24
 
 Porto ; 961234568
-Sabado ; 10 ; 21-11-2017 , 10 ; 22-11-2017 , 11
-Os Lusiadas ; 0 ; 21-11-2017 , 5 ; 22-11-2017 , 2
-Os Maias ; 12 ; 21-11-2017 , 0 ; 22-11-2017 , 3
-Jornal de Noticias ; 0
-Diario ; 0
+Sabado ; 10 
+Os Lusiadas ; 47
+Os Maias ; 12
+Jornal de Noticias ; 101
+Diario de Noticias ; 35
+Uma Aventura ; 25

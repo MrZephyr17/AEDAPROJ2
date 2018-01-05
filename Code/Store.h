@@ -3,30 +3,19 @@
 #include "Classes.h"
 #include "Date.h"
 
-/**
-* @brief This structure holds the publications and its transactions/sales
-*/
-struct PublicationLog
-{
-	unsigned int stock;
-	map<Date, unsigned int> sales;
-	PublicationLog(unsigned int stock = 0, map<Date, unsigned int> sales = {});
-};
+
 
 /**
-* @brief It harbors information about its own publications , requests,stock and it belongs the company
+* @brief It harbors information about its own publications, requests, stock and it belongs the company
 */
 class Store
 {
 private:
-	//typedef map<Publication*, PublicationLog>::iterator stock_it;
 	Company* const company;
 	Employee* manager;
 	string name;
 	string contact;
-	//map<Publication*, PublicationLog> stock; 
 	priority_queue<LocalPublication> stock; 
-	//stock_it getPubl(Publication* publ);
 
 public:
 	// Constructors
@@ -56,7 +45,7 @@ public:
 	 * 
 	 * @return A pointer to the employee responsible for the store.
 	 */ 
-	Employee* getEmployee() const;
+	Employee* getManager() const;
 
 	/**
 	 * @brief Gets the name of the store.
@@ -84,7 +73,7 @@ public:
 	 * @param collection the collection of the requests that should be returned.
 	 * @return a vector containing the requests made by the store of the given collection.
 	 */ 
-	vector<Request*> getRequests(Collection* collection) const;
+	vector<Request*> getRequests(string collection) const;
 
 	/**
 	 * @brief Gets the requests made by the store of a specific publication.
@@ -122,12 +111,6 @@ public:
 	*/
 	bool noStock() const;
 	/**
-	* @brief Adds stock for a given publication
-	* @param publ The target publication we want to add stock
-	* @param s The available stock we want to add for the intended publication
-	*/
-	void addToStock(Publication* publ, unsigned int s);
-	/**
 	* @brief Checks if its possible for the store to sell a given quantity for a selected publication
 	* @param publ The target publication
 	* @param quantity the quantity 
@@ -139,7 +122,7 @@ public:
 	* @param publ the publication we want to request.
 	* @param quantity the quantity of the publication.
 	*/
-	void makeFixedRequest(Publication* publ, unsigned int quantity);
+	void makeRequest(Publication* publ, unsigned int quantity, Date limit);
 	/**
 	* @brief Adds a publication and its stock.
 	*
@@ -147,37 +130,15 @@ public:
 	* @param st the stock added.
 	*/
 	void addPublication(Publication* publ, unsigned int st);
-	/**
-	* @brief Adds a collection and its stock.
-	*
-	* @param publ the target collection.
-	* @param st the stock added.
-	*/
-	void addCollection(Collection* collection);
-	/**
-	* @brief Makes a request of a publication for the store
-	*
-	* @param publ the publication we want to request.
-	*/
-	void makeRequest(Publication* publ);
-	/**
-	* @brief Makes a request of a collection for the store
-	*
-	* @param collection the collection we want to request.
-	*/
-	void makeRequests(Collection* collection);
+
+
 	/**
 	* @brief Removes a publication from the store
 	*
 	* @param publ the target publication.
 	*/
-	void removePublication(Publication* publ);
-	/**
-	* @brief Remove a collection from the store
-	*
-	* @param collection the target collection.
-	*/
-	void removeCollection(Collection* collection);
+	bool removePublication(Publication* publ);
+
 
 	// Writers
 	/**
@@ -196,6 +157,8 @@ public:
 	 */ 
 	string writeToFile() const;
 
+
+
 	vector<Publication*> stockLowerThan(unsigned int n) const;
 
 	vector<LocalPublication> getPublications() const;
@@ -206,6 +169,6 @@ public:
 
 	void removePublication(LocalPublication publication);
 
-	bool operator<(const Store& s2);
+	bool operator<(const Store& s2) const;
 };
 

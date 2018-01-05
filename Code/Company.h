@@ -2,52 +2,49 @@
 
 #include "Classes.h"
 #include "Date.h"
+#include "Request.h"
+#include "Publication.h"
+#include "Supplements.h"
+
+struct suspendedHash
+{
+	int operator() (const Suspended* const& suspended) const
+	{
+		int v = 0;
+		string name = suspended->getPublication()->getName();
+
+		for (unsigned int i = 0; i < name.size(); i++)
+			v = 37 * v + name[i];
+		return v;
+	}
+
+	bool operator() (const Suspended* const& sus1, const Suspended* const& sus2) const
+	{
+		return *sus1 == *sus2;
+	}
+};
+
+typedef unordered_set<Suspended*, suspendedHash, suspendedHash> HashSuspendedRequests;
+
 
 /**
 * @brief The class harbors all the information about the collections,employees,stores and requests.
 */
-
-template <typename T>
-struct PComp
-{
-	bool operator()(const T* a, const T* b) const
-	{
-		return *a < *b;
-	}
-};
-
-struct suspendedHash
-{
-	int operator() (const RequestPtr& req) const
-	{
-		int v = 0;
-		for ( unsigned int i=0; i< req.getPublication()->getName().size(); i++ )
-		v = 37*v + req.getPublication()->getName()[i];
-		return v;
-	}
-
-	bool operator() (const RequestPtr& req1, const RequestPtr& ur2) const
-	{
-		return req1 == req2;
-	}
-};
- 
-typedef unordered_set<RequestPtr,suspendedHash,suspendedHash> HashSuspendedRequests;
-
 class Company
 {
-  private:
-	vector<Store *> stores;
-	vector<Employee *> employees;
+private:
+	set<Store *, PComp<Store> > stores;
+	set<Publication*, PComp<Publication> > publications;
+	set<Employee *, PComp<Employee> > employees;
 	set<Request *, PComp<Request> > productionPlan;
 	HashSuspendedRequests suspendedRequests;
-	vector<Collection *> collections;
-	string storesFileName, collectionsFileName, employeesFileName, requestsFileName;
+
+	string storesFileName, publicationsFileName, employeesFileName, requestsFileName, suspendedRequestsFileName;
 
 	Menu *menu;
 	Date currentDay;
 
-  public:
+public:
 	// ~Company();
 
 	// (Init.cpp)
@@ -65,6 +62,7 @@ class Company
 	* as part of the interface, as in all the pages and sub-pages.
 	*/
 	void initMenu();
+
 
 	// (Files.cpp) Get fileNames.
 	/**
@@ -87,7 +85,7 @@ class Company
 	* @param output
 	*
 	*/
-	void getCollectionsFile(bool output = false);
+	void getPublicationsFile(bool output = false);
 
 	/**
 	* @brief Gets the employees file name from the user.
@@ -111,6 +109,12 @@ class Company
 	*/
 	void getRequestsFile(bool output = false);
 
+	/**
+	*
+	*/
+	void getSuspendedRequestsFile(bool output = false);
+
+
 	// (Files.cpp) Read files and initialize vectors.
 	/**
 	* @brief Reads the stores file previously provided.
@@ -126,7 +130,7 @@ class Company
 	* Reads the collections file and, in case it is correctly formated, creates collections objects
 	* and stores them its vector.
 	*/
-	void readCollectionsFile();
+	void readPublicationsFile();
 
 	/**
 	* @brief Reads the employees file previously provided.
@@ -144,8 +148,13 @@ class Company
 	*/
 	void readRequestsFile();
 
-	// (Files.cpp) Read vectors and save to files.
+	/**
+	*
+	*/
+	void readSuspendedRequestsFile();
 
+
+	// (Files.cpp) Read vectors and save to files.
 	/**
 	* @brief Saves the stores objects to their file.
 	*
@@ -158,7 +167,7 @@ class Company
 	*
 	* Saves the collections in the same format as they were read and to the same file.
 	*/
-	void saveCollectionsToFile();
+	void savePublicationsToFile();
 
 	/**
 	* @brief Saves the employees objects to their file.
@@ -174,57 +183,87 @@ class Company
 	*/
 	void saveRequestsToFile();
 
-	// (Company.cpp) Add newly created object and update all other objects.
-	// Incomplete
 	/**
+	*
+	*/
+	void saveSuspendedRequestsToFile();
 
+
+	// (Company.cpp) Add newly created object and update all other objects.
+	/**
 	* @brief  Add newly created store and update all other stores.
 	* @param newS the new Store to be added.
 	*/
-	void addStore(Store *newS);
+	bool addStore(Store *newS);
 
 	/**
 	* @brief  Add newly created collection and update all other collections.
 	* @param newC the new Collection to be added.
 	*/
-	void addCollection(Collection *newC);
+	bool addPublication(Publication *newP);
+
 	/**
 	* @brief  Add newly created employee and update all other employees.
 	* @param newE the new Employee to be added.
 	*/
-	void addEmployee(Employee *newE);
+	bool addEmployee(Employee *newE);
+
 	/**
 	* @brief  Add newly created request and update all other requests.
 	* @param newR the new Request to be added.
 	*/
 	bool addRequest(Request *newR);
 
-	// (Company.cpp) Remove existing object and update all other objects.
-	// Incomplete
+	/**
+	*
+	*/
+	bool addSuspendedRequest(Suspended* newSR);
 
+
+	// (Company.cpp) Edit existing object, update all other objects if necessary.
+	/**
+	*
+	*/
+	bool editStore(Store* store, string name, unsigned int contact);
+
+	/**
+	*
+	*/
+	bool designateEmployee(Store* store, Employee* employee);
+
+
+	// (Company.cpp) Remove existing objects, update all other objects.
 	/**
 	* @brief  Remove existing store and update all other stores.
 	* @param store the Store to be removed.
 	*/
-	void removeStore(Store *store);
+	bool removeStore(Store *store);
+
 	/**
 	* @brief  Remove existing collection and update all other collections.
 	* @param collection the Collection to be removed.
 	*/
-	void removeCollection(Collection *collection);
+	bool removePublication(Publication *publication);
+
 	/**
 	* @brief  Remove existing employee and update all other employees.
 	* @param employee the Employee to be removed.
 	*/
-	void removeEmployee(Employee *employee);
+	bool removeEmployee(Employee *employee);
+
 	/**
 	* @brief  Remove existing request and update all other requests.
 	* @param request the Request to be removed.
 	*/
 	bool removeRequest(Request *request);
 
-	// (Company.cpp) Gets
+	/**
+	*
+	*/
+	bool removeSuspended(Suspended* suspended);
 
+
+	// (Company.cpp) Gets
 	/**
 	* @brief Gets a store with the provided name.
 	*
@@ -236,18 +275,6 @@ class Company
 	* @return The address of the store with the given name.
 	*/
 	Store *getStore(string name) const;
-
-	/**
-	* @brief Gets a collection with the provided name.
-	*
-	* Making use of a template function, searches through the collections vector
-	* and returns the address of the collection with the given name.
-	* In case it doesn't exist, an exception is thrown.
-	*
-	* @param The name of the collection to get.
-	* @return The address of the collection with the given name.
-	*/
-	Collection *getCollection(string name) const;
 
 	/**
 	* @brief Gets a publication with the provided name.
@@ -272,6 +299,22 @@ class Company
 	* @return The address of the employee with the given name.
 	*/
 	Employee *getEmployee(string name) const;
+
+	/**
+	*
+	*/
+	set<Store*, PComp<Store> > getStores() const;
+
+	/**
+	*
+	*/
+	set<Publication*, PComp<Publication> > getPublications() const;
+
+	/**
+	*
+	*/
+	set<Employee*, PComp<Employee> > getEmployees() const;
+
 	/**
 	* @brief Gets the vector of requests from the provided store.
 	*
@@ -282,15 +325,7 @@ class Company
 	* @param The store of which we wil pull the vector.
 	* @return The vector of requests adresses that the store contains
 	*/
-	vector<Request *> getRequests(const Store *store) const;
-
-	Request *getRequest(string storeName, string publicationName) const;
-
-	string writeRequests(Publication *pub);
-	
-	string writeRequests();
-
-	string writeRequest(Request *req);
+	vector<Request*> getRequests(const Store *store) const;
 
 	/**
 	* @brief Gets the vector of requests from the provided publication.
@@ -302,114 +337,79 @@ class Company
 	* @param The publication of which we wil pull the vector.
 	* @return The vector of requests adresses that the publication contains
 	*/
-	vector<Request *> getRequests(const Publication *publ) const;
+	vector<Request*> getRequests(const Publication *publ) const;
+
 	/**
-	* @brief Gets the vector of requests from the provided collection.
 	*
-	* Copies the requests of the provided collection and pastes it to the vector
-	* if its the collection we are looking for
-	* finally it returns the vector of requests of the given collection
-	*
-	* @param The publication of which we wil pull the vector.
-	* @return The vector of requests adresses that the publication contains
 	*/
-	vector<Request *> getRequests(const Collection *collection) const;
+	vector<Request*> getRequests(const Store* store, const Publication* publ) const;
+
+	/**
+	*
+	*/
+	vector<Request*> getRequests() const;
+
+	/**
+	*
+	*/
+	vector<Suspended*> getSuspendedRequests(const Store* store) const;
+
+	/**
+	*
+	*/
+	vector<Suspended*> getSuspendedRequests(const Publication* publication) const;
+
+	/**
+	*
+	*/
+	vector<Suspended*> getSuspendedRequests(const Store* store, const Publication* publication) const;
+
+	/**
+	*
+	*/
+	vector<Suspended*> getSuspendedRequests() const;
+
 	/**
 	* @brief this function returns the in-game date of the program
 	* returns the current date.
 	*/
 	Date today() const;
 
+
+	// (Company.cpp) Other editing functions
 	/**
-	* @brief Writes to a string a list of all of the stores.
 	*
-	* @return a string containing the names of all the existing stores.
 	*/
-	string writeStores();
+	bool setRequestDeadline(Request* request, Date dateLimit);
 
 	/**
-	* @brief Writes to a string the information of a given store.
 	*
-	* Searches the stores vector for the given store and gets a string
-	* containing data about it.
-	*
-	* @param st the store which information we want to display.
-	* @return a string containing the information of the provided store.
 	*/
-	string writeStore(Store *st);
-
-	/**
-	* @brief Writes to a string the information of a given collection.
-	*
-	* Searches the collections vector for the given collection and gets a string
-	* containing data about it.
-	*
-	* @param col the collection which information we want to display.
-	* @return a string containing the information of the provided collection.
-	*/
-	string writeCollection(Collection *col);
-
-	/**
-	* @brief Writes to a string a list of all of the collections.
-	*
-	* @return a string containing the names of all the existing collections.
-	*/
-	string writeCollections();
-
-	/**
-	* @brief Writes to a string the information of a given employee.
-	*
-	* Searches the employees vector for the given employee and gets a string
-	* containing data about it.
-	*
-	* @param emp the employee which information we want to display.
-	* @return a string containing the information of the provided employee.
-	*/
-	string writeEmployee(Employee *emp);
-
-	/**
-	* @brief Writes to a string a list of all of the employees.
-	*
-	* @return a string containing the names of all the existing employees.
-	*/
-	string writeEmployees();
-
-	/**
-	 * @brief Sorts productionPlan by requestDate.
-	 */
-	void sortRequests();
-
-	/**
-	 * @brief Sorts stores by name.
-	 */
-	void sortStores();
-
-	/**
-	 * @brief Sorts collections by name.
-	 */
-	void sortCollections();
-
-	/**
-	 * @brief Sorts employees by name.
-	 */
-	void sortEmployees();
-
-	bool changeRequestDeliveryLimit(Request *req, Date newLimit);
-
 	void checkRequests();
 
+	/**
+	*
+	*/
 	void sendProduction(Publication* publication, Store* store, unsigned int quantity) const;
 
+	/**
+	*
+	*/
+	bool suspendRequest(Request* request);
 
-	void suspendRequest(Request* request);
+	/**
+	*
+	*/
+	bool endSuspension(Suspended* suspended);
 
-	void endSuspension(RequestPtr suspended);
-	// Operations
-	//void updateRequests();
-	//void sendStock(vector<Request*> ready);
-	//void nextDay();
-	//void checkLowStockStores(); // ou semelhante...
+	/**
+	*
+	*/
+	void checkSuspendedRequests();
 
-	//vector<Publication*> searchByYear(unsigned int year);
-	// ou: searchByDate; searchByDescription; ....
+	// (Company.cpp) Check available names
+	/**
+	*
+	*/
+	bool nameAvailable(string name) const;
 };

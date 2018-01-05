@@ -3,21 +3,44 @@
 #include "Classes.h"
 #include "Date.h"
 
+class LocalPublication
+{
+private:
+	Publication* publication;
+	unsigned int stock;
+public:
+	LocalPublication();
+	LocalPublication(Publication *publication, unsigned int stock);
+	Publication* getPublication() const;
+	unsigned int getStock() const;
+	void setStock(unsigned int stock);
+	void addStock(unsigned int quantity);
+	string write() const;
+
+	bool operator<(const LocalPublication& p2) const;
+	bool operator==(const LocalPublication& p2) const;
+	bool operator!=(const LocalPublication& p2) const;
+};
+
+
+
 /**
 *@brief Class for the publications that are in the collection, each publication can be a book or a magazine
 */
 class Publication
 {
-  protected:
-	friend class Collection;
+protected:
 
+	Company* const company;
 	string name;
 	string description;
-	Collection *const collection;
-	const Date date;
+	string collection;
+	Date releaseDate;
 	double price;
 
-  public:
+	string type;
+
+public:
 	// Constructors
 	/**
 	* @brief Receives discriminated parameters and creates a publication object.
@@ -27,7 +50,10 @@ class Publication
 	* @param date the date of the creation of the publication.
 	* @param price The price of the publication.
 	*/
-	Publication(string name, string description, Collection *collection, Date date, double price);
+	Publication(string name, string description, string collection, Date releaseDate, double price, string type);
+
+	
+	Publication(string info, Company* company);
 
 	// Gets
 	/**
@@ -44,17 +70,21 @@ class Publication
 	* @brief gets the collection of the the specific publication.
 	* @return the colletion of the publication.
 	*/
-	Collection *getCollection() const;
+	string getCollection() const;
 	/**
 	* @brief gets the date of the the specific publication.
 	* @return the date of the publication.
 	*/
-	Date getDate() const;
+	Date getReleaseDate() const;
 	/**
 	* @brief gets the price of the the specific publication.
 	* @return the price of the publication.
 	*/
 	double getPrice() const;
+
+	string getType() const;
+	
+	vector<Request*> getRequests() const;
 
 	// Sets
 	/**
@@ -81,35 +111,22 @@ class Publication
 	* @return a string containing information of the publication
 	*/
 	virtual string writeInfo() const;
-};  
 
-class LocalPublication
-{ 
-  private:
-	Publication* publication;
-	unsigned int stock;
-  public:
-	LocalPublication(Publication *publication, unsigned int stock);
-	LocalPublication() : publication(nullptr), stock(0);
-	Publication* getPublication() const;
-	unsigned int getStock() const;
-	void setPublication(Publication *publication);
-	void setStock(unsigned int stock);
-	void addStock(unsigned int quantity);
+	virtual string writeToFile() const;
 
-	bool operator<(const LocalPublication& p2);
-	bool operator==(const LocalPublication& p2);
+	bool operator<(const Publication& publ) const;
 };
+
+
 
 /**
 *@brief A specific type of publication that is a book
 */
 class Book : public Publication
 {
-	friend class BookCollection;
-	string version;
+	unsigned int edition;
 
-  public:
+public:
 	// Constructors
 	/**
 	* @brief Receives discriminated parameters and creates a book object.
@@ -119,14 +136,16 @@ class Book : public Publication
 	* @param date the date of the creation of the book.
 	* @param price The price of the book.
 	*/
-	Book(string name, string description, Collection *collection, Date date, double price, string version = "Original version"); // Ou o caralho
+	Book(string name, string description, string collection, Date date, double price, unsigned int edition = 1);
+
+	Book(string info, Company* company);
 
 	// Gets
 	/**
-																																 * @brief gets the volume of the the specific book.
-																																 * @return the version of the book.
-																																 */
-	string getVersion() const;
+	* @brief gets the volume of the the specific book.
+	* @return the version of the book.
+	*/
+	unsigned int getEdition() const;
 
 	// Operations
 
@@ -136,19 +155,18 @@ class Book : public Publication
 	* @return a string containing information of the book.
 	*/
 	string writeInfo() const;
+
+	string writeToFile() const;
 };
 /**
 *@brief A specific type of publication that is a Magazine it has volume and number.
 */
 class Magazine : public Publication
 {
-  private:
-	friend class MagazineCollection;
+	unsigned int volume;
+	unsigned int number;
 
-	const unsigned int volume;
-	const unsigned int number;
-
-  public:
+public:
 	// Constructors
 	/**
 	* @brief Receives discriminated parameters and creates a magazine object.
@@ -160,7 +178,9 @@ class Magazine : public Publication
 	* @param v The volume of the magazine.
 	* @param n The number of the magazine.
 	*/
-	Magazine(string name, string description, Collection *collection, Date date, double price, unsigned int v, unsigned int n);
+	Magazine(string name, string description, string collection, Date date, double price, unsigned int v, unsigned int n);
+
+	Magazine(string info, Company* company);
 
 	// Gets
 	/**
@@ -182,4 +202,6 @@ class Magazine : public Publication
 	* @return a string containing information of the magazine
 	*/
 	string writeInfo() const;
+
+	string writeToFile() const;
 };

@@ -3,30 +3,13 @@
 #include "Classes.h"
 #include "Date.h"
 
-class RequestPtr
-{
-  private:
-	Request *request;
-	Date suspensionDate;
-
-  public:
-	RequestPtr(Request* request, Date suspensionDate);
-	Request *getRequest();
-	Publication *getPublication() const;
-	Store *getStore() const;
-	Date getRequestDate() const;
-	Date getDeliveryLimit() const;
-	Date getSuspensionDate() const;
-	unsigned int getQuantity() const;
-	bool operator==(const RequestPtr& req2) const;
-}
 
 /**
 * @brief It has the info about a given publication that is asked by a store and its quantity among other atributes
 */
 class Request
 {
-  private:
+  protected:
 	Company *const company;
 	Publication *publication;
 	Store *store;
@@ -36,7 +19,6 @@ class Request
 
   public:
 	// Constructors
-	friend class RequestPtr;
 	/**
 	 * @brief Reads the info string and creates a request object.
 	 * 
@@ -56,6 +38,10 @@ class Request
 	 * @param quantity The number of publications to be produced.
 	 */
 	Request(Company *company, Publication *publ, Store *store, unsigned int quantity, Date limit);
+
+
+	Request(Company *company, Publication *publ, Store *store, unsigned int quantity, Date requestDate, Date limit);
+
 
 	// Gets
 
@@ -85,24 +71,13 @@ class Request
 	 */
 	unsigned int getQuantity() const;
 
-	// Sets
-	/**
-	* @brief Replaces the selected store to a new store
-	* @param store the new store.
-	*/
-	void changeStore(Store *store);
-
-	// Operations
-	//bool isDone() const;
-	void conclude();
-
 	// Writers
 
 	/**
 	 * @brief Creates and returns a formated string containing data of the request.
 	 * @return a string containing information of the request
 	 */
-	string writeInfo() const;
+	virtual string writeInfo() const;
 
 	/**
 	 * @brief Returns a string to be written to a file.
@@ -112,9 +87,26 @@ class Request
 	 * 
 	 * @return a string containing information of the request
 	 */
-	string writeToFile() const;
+	virtual string writeToFile() const;
 
 	void setDeliveryLimit(Date newLimit);
 
-	bool operator<(const Request &r2);
+	bool operator<(const Request &r2) const;
 };
+
+class Suspended : public Request
+{
+private:
+	Date suspensionDate;
+
+public:
+	Suspended(Company *company, Publication *publ, Store *store, unsigned int quantity, Date limit, Date suspensionDate);
+	Suspended(Company *company, Publication *publ, Store *store, unsigned int quantity, Date requestDate, Date limit, Date suspensionDate);
+
+	Suspended(string info, Company* company);
+	Date getSuspensionDate() const;
+	string writeInfo() const;
+	string writeToFile() const;
+	bool operator==(const Suspended& req2) const;
+};
+

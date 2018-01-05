@@ -92,6 +92,6 @@ public:
 	*/
 	string writeToFile() const;
 
-	bool operator<(const Employee &e2);
+	bool operator<(const Employee &e2) const;
 };
 

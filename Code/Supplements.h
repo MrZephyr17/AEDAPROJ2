@@ -39,7 +39,17 @@ string capitalize(const string& str);
 // Counts the number of occurrences of characters in the given string.
 size_t count(const string& str, string search);
 
+// Checks if a given string is a double
+bool isDouble(const string& s);
 
+template <typename T>
+struct PComp
+{
+	bool operator()(const T* a, const T* b) const
+	{
+		return *a < *b;
+	}
+};
 
 template <class T>
 typename vector<T*>::iterator findElement(T* el, vector<T*> &vec)
@@ -72,13 +82,13 @@ typename vector<T*>::iterator findObject(string name, vector<T*> &vec)
 }
 
 template <class T>
-typename vector<T*>::const_iterator findObject(string name, const vector<T*> &vec)
+typename set<T*>::const_iterator findObject(string name, const set<T*, PComp<T>> &set)
 {
-	for (auto it = vec.cbegin(); it != vec.cend(); ++it)
+	for (auto it = set.cbegin(); it != set.cend(); ++it)
 		if ((*it)->getName() == name)
 			return it;
 
-	return vec.cend();
+	return set.cend();
 }
 
 template <class T>
@@ -94,11 +104,11 @@ bool hasObject(string name, const vector<T*> &vec)
 }
 
 template <class T>
-T* getObject(string name, const vector<T*> &vec)
+T* getObject(string name, const set<T*, PComp<T> > &set)
 {
-	auto it = findObject(name, vec);
-	if (it == vec.cend())
-		throw(NameNotFound(name,typeid(T).name()));
+	auto it = findObject(name, set);
+	if (it == set.cend())
+		throw(NameNotFound(name, typeid(T).name()));
 	else
 		return *it;
 }

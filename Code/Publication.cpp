@@ -1,8 +1,9 @@
 #include "Publication.h"
-
-#include "Collection.h"
-
+#include "Supplements.h"
+#include "Company.h"
 #include <iostream>
+
+LocalPublication::LocalPublication() : publication(nullptr), stock(stock) {}
 
 LocalPublication::LocalPublication(Publication *publication, unsigned int stock) : publication(publication), stock(stock) {}
 
@@ -16,25 +17,9 @@ unsigned int LocalPublication::getStock() const
 	return stock;
 }
 
-void LocalPublication::setPublication(Publication *publication)
-{
-	this->publication = publication;
-}
-
 void LocalPublication::setStock(unsigned int stock)
 {
 	this->stock = stock;
-}
-
-//maior ou menor?
-bool LocalPublication::operator<(const LocalPublication &p2)
-{
-	return stock > p2.getStock();
-}
-
-bool LocalPublication::operator==(const LocalPublication &p2)
-{
-	return publication == p2.getPublication() && stock == p2.getStock();
 }
 
 void LocalPublication::addStock(unsigned int quantity)
@@ -42,7 +27,52 @@ void LocalPublication::addStock(unsigned int quantity)
 	stock += quantity;
 }
 
-Publication::Publication(string name, string description, Collection *collection, Date date, double price) : name(name), description(description), collection(collection), date(date), price(price) {}
+
+string LocalPublication::write() const
+{
+	string space = " ";
+
+	string info  = publication->getName() + space + FILE_ITEM_SEPARATOR + space;
+	info += stock + "\n";
+
+	return info;
+}
+
+//maior ou menor?
+bool LocalPublication::operator<(const LocalPublication &p2) const
+{
+	return stock > p2.getStock();
+}
+
+bool LocalPublication::operator==(const LocalPublication &p2) const
+{
+	return publication == p2.getPublication() && stock == p2.getStock();
+}
+
+bool LocalPublication::operator!=(const LocalPublication& p2) const
+{
+	return !(*this == p2);
+}
+
+
+
+
+
+Publication::Publication(string name, string description, string collection, Date releaseDate, double price, string type)
+	: company(company), name(name), description(description), collection(collection), releaseDate(releaseDate), price(price), type(type) {}
+
+Publication::Publication(string info, Company* company)
+	: company(company)
+{
+	vector<string> separated = split(info, FILE_ITEM_SEPARATOR);
+
+	type = trim(separated.at(0));
+	name = trim(separated.at(1));
+	description = trim(separated.at(2));
+	collection = trim(separated.at(3));
+	releaseDate = Date(trim(separated.at(4)));
+	price = stod(separated.at(5));
+}
 
 string Publication::getName() const
 {
@@ -54,19 +84,29 @@ string Publication::getDescription() const
 	return description;
 }
 
-Collection *Publication::getCollection() const
+string Publication::getCollection() const
 {
 	return collection;
 }
 
-Date Publication::getDate() const
+Date Publication::getReleaseDate() const
 {
-	return date;
+	return releaseDate;
 }
 
 double Publication::getPrice() const
 {
 	return price;
+}
+
+string Publication::getType() const
+{
+	return type;
+}
+
+vector<Request*> Publication::getRequests() const
+{
+	return company->getRequests(this);
 }
 
 void Publication::setName(string newName)
@@ -86,34 +126,84 @@ void Publication::setPrice(double newPrice)
 
 string Publication::writeInfo() const
 {
-	string m;
+	string info;
 
-	m = "Name: " + name + "\n";
-	m += "Description: " + description + "\n";
-	m += "Collection: " + collection->getName() + "\n";
-	m += "Date: " + date.write() + "\n";
-	m += "Price: " + to_string(price) + "\n";
+	info = "Name: " + name + "\n";
+	info += "Description: " + description + "\n";
+	info += "Collection: " + collection + "\n";
+	info += "Date: " + releaseDate.write() + "\n";
+	info += "Price: " + to_string(price) + "\n";
 
-	return m;
+	return info;
 }
 
-Book::Book(string name, string description, Collection *collection, Date date, double price, string version) : Publication(name, description, collection, date, price), version(version) {}
+string Publication::writeToFile() const
+{	
+	string space = " ";
 
-string Book::getVersion() const
+	string fileItem = type + space + FILE_ITEM_SEPARATOR + space;
+	fileItem += name + space + FILE_ITEM_SEPARATOR + space;
+	fileItem += description + space + FILE_ITEM_SEPARATOR + space;
+	fileItem += collection + space + FILE_ITEM_SEPARATOR + space;
+	fileItem += releaseDate.write() + space + FILE_ITEM_SEPARATOR + space;
+	fileItem += to_string(price) + space + FILE_ITEM_SEPARATOR + space;
+
+	return fileItem;
+}
+
+bool Publication::operator<(const Publication& publ) const
 {
-	return version;
+	return name < publ.getName();
+}
+
+
+
+
+Book::Book(string name, string description, string collection, Date date, double price, unsigned int edition)
+	: Publication(name, description, collection, date, price, "Book"), edition(edition) {}
+
+Book::Book(string info, Company* company) : Publication(info, company)
+{
+	vector<string> separated = split(info, FILE_ITEM_SEPARATOR);
+
+	this->edition = stoi(separated.at(separated.size()-1));
+}
+
+unsigned int Book::getEdition() const
+{
+	return edition;
 }
 
 string Book::writeInfo() const
 {
-	string m = Publication::writeInfo();
-	m += "Version: " + version + "\n\n";
+	string info = Publication::writeInfo();
 
-	return m;
+	info += "Version: " + to_string(edition) + "\n\n";
+
+	return info;
 }
 
-Magazine::Magazine(string name, string description, Collection *collection, Date date, double price, unsigned int v, unsigned int n)
-	: Publication(name, description, collection, date, price), volume(v), number(n) {}
+string Book::writeToFile() const
+{
+	string fileItem = Publication::writeToFile();
+
+	fileItem += to_string(edition) + "\n";
+
+	return fileItem;
+}
+
+
+
+Magazine::Magazine(string name, string description, string collection, Date date, double price, unsigned int v, unsigned int n)
+	: Publication(name, description, collection, date, price, "Magazine"), volume(v), number(n) {}
+
+Magazine::Magazine(string info, Company* company) : Publication(info,company)
+{
+	vector<string> separated = split(info, FILE_ITEM_SEPARATOR);
+
+	this->volume = stoi(separated.at(6));
+	this->number = stoi(separated.at(7));
+}
 
 unsigned int Magazine::getVolume() const
 {
@@ -132,4 +222,16 @@ string Magazine::writeInfo() const
 	m += "Number: " + to_string(number) + "\n\n";
 
 	return m;
+}
+
+string Magazine::writeToFile() const
+{
+	string fileItem = Publication::writeToFile();
+	string space = " ";
+
+	fileItem += to_string(volume) + space + FILE_ITEM_SEPARATOR + space;
+	fileItem += to_string(number);
+	fileItem += "\n";
+
+	return fileItem;
 }

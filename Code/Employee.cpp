@@ -14,13 +14,13 @@ Employee::Employee(string info, Company* company) :
 	name = trim(separated.at(0));
 	birthDate = Date(trim(separated.at(1)));
 
-	string storeName;
 	if (separated.size() == 3) {
-		storeName = trim(separated.at(2));
+		string storeName = trim(separated.at(2));
 		store = company->getStore(storeName);
+		if (store == nullptr) throw;
 	}
 	else
-		store = NULL;
+		store = nullptr;
 }
 
 Employee::Employee(Company* company, string name, Date birthDate) :
@@ -59,23 +59,28 @@ void Employee::setStore(Store* newStore)
 
 string Employee::writeInfo() const
 {
-	string m;
-	m = "Employee information\n";
-	m += "Name: " + name + "\n";
-	m += "Birthdate: " + birthDate.write() + "\n";
-	m += "Designated Store: " + (store ? store->getName() : "None") + "\n\n";
+	string info;
 
-	return m;
+	info = "Employee information\n";
+	info += "Name: " + name + "\n";
+	info += "Birthdate: " + birthDate.write() + "\n";
+	info += "Designated Store: " + (store ? store->getName() : "None") + "\n\n";
+
+	return info;
 } 
 
-string Employee::writeToFile() const {
+string Employee::writeToFile() const 
+{
 	string space = " ";
+
 	string str = name + space + FILE_ITEM_SEPARATOR + space;
 	str += birthDate.write();
 	str += (store ? (space + FILE_ITEM_SEPARATOR + space + store->getName()) : "") + FILE_LINE_SEPARATOR;
+
 	return str;
 }
 
-bool Employee::operator<(const Employee &e2){
+bool Employee::operator<(const Employee &e2) const
+{
 	return name < e2.getName();
 }

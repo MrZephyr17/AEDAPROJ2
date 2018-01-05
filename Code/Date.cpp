@@ -17,6 +17,14 @@ namespace Months {
 	constexpr Date::Month December = 12;
 }
 
+Date Date::randomBirthDate() {
+	Month month = 1 + (rand() % 12);
+	Year year = 1950 + (rand() % 50);
+	Day day = 1 + (rand() % numberOfDaysInMonth(month, year));
+
+	return Date(day, month, year);
+}
+
 bool Date::validDate(const Date& date)
 {
 	return (date.day > 0) && (date.day <= numberOfDaysInMonth(date.month, date.year));
@@ -165,10 +173,11 @@ unsigned int Date::numberOfDaysInYear(Year year)
 void Date::setCurrentDay()
 {
 	time_t result = time(nullptr);
-    struct tm *now = localtime(&result);
-    this->year = now->tm_year + 1900;
-   	this->month = now->tm_mon + 1;
-    this->day = now->tm_mday;
+	struct tm now;
+	localtime_s(&now, &result);
+    this->year = now.tm_year + 1900;
+   	this->month = now.tm_mon + 1;
+    this->day = now.tm_mday;
 } 
 
 Date& Date::operator++()
@@ -297,7 +306,7 @@ bool operator>=(const Date& lhs, const Date& rhs)
 
 ostream & operator<<(ostream & o, const Date & d)
 {
-	o << d.day << "-" << d.month << "-" << d.year << endl;
+	o << d.write();
 
 	return o;
 }

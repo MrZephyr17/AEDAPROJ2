@@ -3,6 +3,9 @@
 // ****************************************************************************************************
 #include "supplements.h"
 
+#include <sstream>
+#include <iomanip>
+
 
 string substring(const string& str, size_t first, size_t last) {
 	return str.substr(first, last - first);
@@ -170,4 +173,12 @@ size_t count(const string& str, string search) {
 	};
 
 	return total;
+}
+
+bool isDouble(const string& str)
+{
+	istringstream iss(str);
+	double d;
+
+	return iss >> d >> ws && iss.eof();
 }

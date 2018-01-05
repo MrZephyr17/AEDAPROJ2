@@ -122,21 +122,16 @@ private:
 		bool creating = false;
 
 		bool newStore = false;
-		bool newCollection = false;
 		bool newEmployee = false;
 		bool newRequest = false;
 		bool newPublication = false;
 	};
 	struct Chosen {
 		Store* store = nullptr;
-		Collection* collection = nullptr;
 		Employee* employee = nullptr;
 		Request* request = nullptr;
+		Suspended* suspended = nullptr;
 		Publication* publication = nullptr;
-	};
-	struct Extra {
-		string str1, str2;
-		int int1 = 0, int2 = 0;
 	};
 public:
 	Menu* const menu;
@@ -148,7 +143,6 @@ public:
 
 	State is;
 	Chosen chosen;
-	Extra extra;
 	InputReader reader;
 	Token token;
 

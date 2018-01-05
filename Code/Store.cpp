@@ -1,7 +1,6 @@
 #include "Store.h"
 
 #include "Company.h"
-#include "Collection.h"
 #include "Employee.h"
 #include "Request.h"
 #include "Publication.h"
@@ -12,16 +11,6 @@
 
 #include <algorithm>
 
-PublicationLog::PublicationLog(unsigned int stock, map<Date, unsigned int> sales) : stock(stock), sales(sales) {}
-
-Store::stock_it Store::getPubl(Publication *publ)
-{
-	for (auto it = stock.begin(); it != stock.end(); ++it)
-		if (it->first == publ)
-			return it;
-
-	return stock.end();
-}
 
 Store::Store(string info, Company *comp) : company(comp)
 {
@@ -29,42 +18,28 @@ Store::Store(string info, Company *comp) : company(comp)
 	vector<string> firstLine = split(separated.at(0), FILE_ITEM_SEPARATOR);
 	this->name = trim(firstLine.at(0));
 	this->contact = trim(firstLine.at(1));
-	manager = NULL;
+	manager = nullptr;
 
-	for (auto it = separated.begin() + 1; it != separated.end(); it++)
+	for (auto it = separated.begin() + 1; it != separated.end(); ++it)
 	{
-		vector<string> line = split(*it, FILE_ITEM_SEPARATOR);
-		string name = trim(line.at(0));
-		Publication *pub = company->getPublication(name);
-		if (pub == nullptr)
-		{
-			throw MalformedFileItem<Store>(this, "Invalid publication line");
-		}
+		string line = *it;
+		vector<string> pair = split(line, FILE_ITEM_SEPARATOR);
+		string name = trim(pair.at(0));
+		Publication *publ = company->getPublication(name);
 
-		unsigned int s = stoi(line.at(1));
-		map<Date, unsigned int> sales;
+		if (publ == nullptr)
+			throw MalformedFileItem<Store>(this, "Invalid store stock line.");
 
-		for (auto it = line.begin() + 2; it != line.end(); it++)
-		{
-			vector<string> m = split(*it, DEFAULT_PAIR_SEPARATOR);
-			Date d(trim(m.at(0)));
-			unsigned int numberSales = stoi(trim(m.at(1)));
+		unsigned int s = stoi(pair.at(1));
 
-			auto res = sales.insert(pair<Date, unsigned int>(d, numberSales));
-			/*if (res.second == false) {
-				throw MalformedFileItem<Store>(this, "Repeated date");
-			}*/
-		}
-
-		PublicationLog pL(s, sales);
-
-		stock.insert(pair<Publication *, PublicationLog>(pub, pL));
+		addPublication(publ, s);
 	}
 }
 
-Store::Store(Company *company, string name, string contact, Employee *manager) : company(company), manager(manager), name(name), contact(contact) {}
+Store::Store(Company *company, string name, string contact, Employee *manager)
+	: company(company), manager(manager), name(name), contact(contact) {}
 
-Employee *Store::getEmployee() const
+Employee *Store::getManager() const
 {
 	return manager;
 }
@@ -84,30 +59,24 @@ vector<Request *> Store::getRequests() const
 	return company->getRequests(this);
 }
 
-vector<Request *> Store::getRequests(Collection *collection) const
+vector<Request *> Store::getRequests(string collection) const
 {
 	vector<Request *> res, reqs = company->getRequests(this);
-	for (auto it = reqs.begin(); it != reqs.end(); ++it)
-	{
-		if ((*it)->getPublication()->getCollection() == collection)
-		{
-			res.push_back(*it);
-		}
-	}
-	return res;
+
+	copy_if(reqs.begin(), reqs.end(), back_inserter(res),
+		[&collection](Request *request) { return request->getPublication()->getCollection() == collection; });
+
+	return reqs;
 }
 
 vector<Request *> Store::getRequests(Publication *publ) const
 {
 	vector<Request *> res, reqs = company->getRequests(this);
-	for (auto it = reqs.begin(); it != reqs.end(); ++it)
-	{
-		if ((*it)->getPublication() == publ)
-		{
-			res.push_back(*it);
-		}
-	}
-	return res;
+
+	copy_if(reqs.begin(), reqs.end(), back_inserter(res),
+		[&publ](Request *request) { return  request->getPublication() == publ; });
+
+	return reqs;
 }
 
 void Store::setName(string newName)
@@ -130,152 +99,96 @@ bool Store::noStock() const
 	return stock.empty();
 }
 
-void Store::addToStock(Publication *publ, unsigned int s)
-{
-	getPubl(publ)->second.stock += s;
-}
-
 bool Store::sellPublication(Publication *publ, unsigned int quantity)
 {
-	//update PublicationLog
-	unsigned int &stock = getPubl(publ)->second.stock;
-	if (stock < quantity)
+	LocalPublication lp = getPublication(publ);
+	unsigned int st = lp.getStock();
+	removePublication(lp);
+
+	if (st < quantity)
 	{
-		stock = 0;
+		lp.setStock(0);
+		stock.push(lp);
+
 		return false;
 	}
 	else
 	{
-		stock -= quantity;
+		lp.setStock(st - quantity);
+		stock.push(lp);
+
 		return true;
 	}
 }
 
-void Store::makeFixedRequest(Publication *publ, unsigned int quantity)
+void Store::makeRequest(Publication *publ, unsigned int quantity, Date limit)
 {
-	Request *req = new Request(company, publ, this, quantity);
-	company->addRequest(req);
+	Request *request = new Request(company, publ, this, quantity, limit);
+	company->addRequest(request);
 }
 
 void Store::addPublication(Publication *publ, unsigned int st)
 {
-	for (auto it = stock.begin(); it != stock.end(); it++)
-		if (it->first == publ)
+	vector<LocalPublication> pub = getPublications();
+
+	for (const auto& x : pub)
+		if (x.getPublication() == publ)
 			throw(DuplicateElement<Publication>(publ));
 
-	PublicationLog p(st);
-
-	stock[publ] = p;
-	// stock.insert(pair<Publication* const, PublicationLog>(publ, st));
+	LocalPublication lp(publ, st);
+	stock.push(lp);
 }
 
-void Store::addCollection(Collection *collection)
+bool Store::removePublication(Publication* publ)
 {
-	auto publications = collection->getAllPublications();
-	for (auto p : publications)
-		addPublication(p, 0);
-}
+	LocalPublication lp = getPublication(publ);
 
-void Store::makeRequest(Publication *publ)
-{
-	if (publ->getCollection()->getType() == TYPE_BOOK)
-	{
-		Request *request = new Request(company, publ, this, DEFAULT_BOOK_QT_REQ);
-		company->addRequest(request);
+	if (lp.getPublication() != nullptr) {
+		removePublication(lp);
+		return true;
 	}
-	else
-	{
-		Request *request = new Request(company, publ, this, DEFAULT_MAGAZINE_QT_REQ);
-		company->addRequest(request);
-	}
-}
 
-void Store::makeRequests(Collection *collection)
-{
-	auto publications = collection->getAllPublications();
-	for (auto p : publications)
-		makeRequest(p);
-}
-
-void Store::removePublication(Publication *publ)
-{
-	for (auto it = stock.begin(); it != stock.end(); it++)
-		if (it->first == publ)
-			stock.erase(it);
-
-	throw(NonExistentElement<Publication>(publ));
-}
-
-void Store::removeCollection(Collection *collection)
-{
-	auto it = stock.begin();
-	auto s = *it;
-
-	for (auto it = stock.begin(); it != stock.end();)
-	{
-		if (it->first->getCollection() == collection)
-			it = stock.erase(it);
-		else
-			++it;
-	}
+	throw NonExistentElement<Publication>(publ);
 }
 
 string Store::writeInfo() const
 {
-	string m;
+	string info;
 	vector<LocalPublication> pub = getPublications();
 
-	m = "Store Information\n";
-	m += "Name/Local: " + name + "\n";
-	m += "Contact: " + contact + "\n";
-	m += "Manager: " + (manager ? manager->getName() : "None") + "\n";
+	info = "Store Information\n";
+	info += "Name/Local: " + name + "\n";
+	info += "Contact: " + contact + "\n";
+	info += "Manager: " + (manager ? manager->getName() : "None") + "\n";
 
-	/*
-	for (auto it = stock.cbegin(); it != stock.cend(); ++it) {
-		m += "Publication: " + it->first->getName() + "\n";
-		m += " Stock: " + to_string(it->second.stock) + "\n";
-		auto &sales = it->second.sales;
-		for (auto s = sales.cbegin(); s != sales.cend(); ++s)
-			m += " " + s->first.write() + ": Sold " + to_string(s->second) + "\n";
-	}*/
-
-	for (auto x : pub)
+	for (const auto& x : pub)
 	{
-		m += "Publication: " + x.publication->getName() + "\n";
-		m += " Stock: " + to_string(x.stock) + "\n";
+		info += "Publication: " + x.getPublication()->getName() + "\n";
+		info += "Stock: " + to_string(x.getStock()) + "\n";
 	}
-	//sales???
-	m += "\n";
-	return m;
+	info += "\n";
+
+	return info;
 }
 
-//alterar
 string Store::writeToFile() const
 {
+	vector<LocalPublication> publications = getPublications();
 	string space = " ";
-	string str = name + space + FILE_ITEM_SEPARATOR + space + contact + FILE_LINE_SEPARATOR;
-	for (auto it = stock.cbegin(); it != stock.cend(); ++it)
-	{
-		Publication *publ = it->first;
-		auto &log = it->second;
-		str += publ->getName() + space + FILE_ITEM_SEPARATOR + space;
-		str += to_string(log.stock);
-		for (auto s = log.sales.cbegin(); s != log.sales.cend(); ++s)
-		{
-			str += space + FILE_ITEM_SEPARATOR + space + (s->first.write());
-			str += space + DEFAULT_PAIR_SEPARATOR + space + (to_string(s->second));
-		}
-		str += FILE_LINE_SEPARATOR;
-	}
-	return str;
+	string fileItem = name + space + FILE_ITEM_SEPARATOR + space + contact + FILE_LINE_SEPARATOR;
+
+	for (const auto& x : publications)
+		fileItem += x.write();
+
+	return fileItem;
 }
 
-bool Store::operator<(const Store &s2)
+bool Store::operator<(const Store &s2) const
 {
 	return name < s2.getName();
 }
 
-vector<Publication *> stockLowerThan(unsigned int n) const
+vector<Publication *> Store::stockLowerThan(unsigned int n) const
 {
 	vector<Publication *> lower;
 	priority_queue<LocalPublication> temp = stock;
@@ -286,23 +199,22 @@ vector<Publication *> stockLowerThan(unsigned int n) const
 
 	lp = temp.top();
 
-	while (lp.stock < n)
+	while (lp.getStock() < n)
 	{
-		lp = temp.top();
-		temp.pop();
-
 		lower.push_back(lp.getPublication());
+		temp.pop();
+		lp = temp.top();
 	}
 
 	return lower;
 }
 
-vector<LocalPublication> getPublications() const
+vector<LocalPublication> Store::getPublications() const
 {
 	vector<LocalPublication> publications;
-	pirority_queue<LocalPublication> temp = stock;
+	priority_queue<LocalPublication> temp = stock;
 
-	while (!temp.empty)
+	while (!temp.empty())
 	{
 		publications.push_back(temp.top());
 		temp.pop();
@@ -319,16 +231,14 @@ void Store::receiveProduction(Publication *publication, unsigned int quantity)
 	stock.push(pub);
 }
 
-LocalPublication Store::LocalPublication getPublication(Publication* publication) const
+LocalPublication Store::getPublication(Publication* publication) const
 {
 	vector<LocalPublication> pub = getPublications();
 	LocalPublication empty;
-	
-	for(auto x: pub)
-	{
-		if(x.publication == publication)
-		return x;
-	}
+
+	for (const auto& x : pub)
+		if (x.getPublication() == publication)
+			return x;
 
 	return empty;
 }
@@ -336,10 +246,13 @@ LocalPublication Store::LocalPublication getPublication(Publication* publication
 void Store::removePublication(LocalPublication publication)
 {
 	priority_queue<LocalPublication> pub = stock;
+	LocalPublication top;
 
 	while (!stock.empty())
 	{
-		if (stock.top() != publication)
+		top = stock.top();
+
+		if (top != publication)
 			pub.push(stock.top());
 
 		stock.pop();

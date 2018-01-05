@@ -2,22 +2,12 @@
 
 #include "Company.h"
 #include "Store.h"
-#include "Collection.h"
 #include "Publication.h"
 #include "Date.h"
 
 #include "Supplements.h"
 
 #include <iostream>
-
-bool RequestPtr::operator==(const RequestPtr& req2) const
-{
-	return suspensionDate == req2.getSuspensionDate() && request == req2.getRequest();
-}
-
-RequestPtr::RequestPtr(Request* request, Date suspensionDate) : 
-request(request), suspensionDate(suspensionDate)
-{}
 
 
 Request::Request(string info, Company *company) : company(company)
@@ -35,9 +25,13 @@ Request::Request(string info, Company *company) : company(company)
 	deliveryLimit = Date(trim(separated.at(3)));
 
 	quantity = stoi(separated.at(4));
+
+	if (publication == nullptr || store == nullptr) throw;
 }
 
 Request::Request(Company *company, Publication *publ, Store *store, unsigned int quantity, Date limit) : company(company), publication(publ), store(store), quantity(quantity), requestDate(company->today()), deliveryLimit(limit) {}
+
+Request::Request(Company *company, Publication *publ, Store *store, unsigned int quantity, Date requestDate, Date limit) : company(company), publication(publ), store(store), quantity(quantity), requestDate(requestDate), deliveryLimit(limit) {}
 
 Publication *Request::getPublication() const
 {
@@ -54,14 +48,41 @@ Date Request::getRequestDate() const
 	return requestDate;
 }
 
+Date Request::getDeliveryLimit() const
+{
+	return deliveryLimit;
+}
+
 unsigned int Request::getQuantity() const
 {
 	return quantity;
 }
 
-void Request::changeStore(Store *newStore)
+string Request::writeInfo() const
 {
-	store = newStore;
+	string info;
+
+	info = "Request information\n";
+	info += "Publication: " + publication->getName() + "\n";
+	info += "Store: " + store->getName() + "\n";
+	info += "Request date: " + requestDate.write() + "\n";
+	info += "Delivery limit: " + deliveryLimit.write() + "\n";
+	info += "Quantity: " + to_string(quantity) + "\n\n";
+
+	return info;
+}
+
+string Request::writeToFile() const
+{
+	string space = " ";
+
+	string fileItem = publication->getName() + space + FILE_ITEM_SEPARATOR + space;
+	fileItem += store->getName() + space + FILE_ITEM_SEPARATOR + space;
+	fileItem += requestDate.write() + space + FILE_ITEM_SEPARATOR + space;
+	fileItem += deliveryLimit.write() + space + FILE_ITEM_SEPARATOR + space;
+	fileItem += to_string(quantity) + FILE_LINE_SEPARATOR;
+
+	return fileItem;
 }
 
 void Request::setDeliveryLimit(Date newLimit)
@@ -69,49 +90,63 @@ void Request::setDeliveryLimit(Date newLimit)
 	deliveryLimit = newLimit;
 }
 
-/*
-bool Request::isDone() const
+bool Request::operator<(const Request &r2) const
 {
-	unsigned int prodTime = publication->getCollection()->getMinProductionTime();
-
-	return ((requestDate + prodTime) >= company->today());
-}
-*/
-
-string Request::writeInfo() const
-{
-	string m;
-
-	m = "Request information\n";
-	m += "Publication: " + publication->getName() + "\n";
-	m += "Store: " + store->getName() + "\n";
-	m += "Request date: " + requestDate.write() + "\n";
-	m += "Delivery limit: " + deliveryLimit.write() + "\n";
-	m += "Quantity: " + to_string(quantity) + "\n\n";
-
-	return m;
+	if (publication != r2.getPublication())
+		return publication->getName() < r2.getPublication()->getName();
+	else if (quantity != r2.getQuantity())
+		return quantity < r2.getQuantity();
+	else if (store != r2.getStore())
+		return store->getName() < r2.getStore()->getName();
+	else
+		return requestDate < r2.getRequestDate();
 }
 
-string Request::writeToFile() const
+
+Suspended::Suspended(Company *company, Publication *publ, Store *store, unsigned int quantity, Date limit, Date suspensionDate) :
+	Request(company, publ, store, quantity, limit), suspensionDate(suspensionDate)
+{}
+
+Suspended::Suspended(Company *company, Publication *publ, Store *store, unsigned int quantity, Date requestDate, Date limit, Date suspensionDate) :
+	Request(company, publ, store, quantity, requestDate, limit), suspensionDate(suspensionDate)
+{}
+
+Suspended::Suspended(string info, Company* company) : Request(info, company)
+{
+	vector<string> separated = split(info, FILE_ITEM_SEPARATOR);
+
+	suspensionDate = Date(trim(separated.at(5)));
+}
+
+Date Suspended::getSuspensionDate() const
+{
+	return suspensionDate;
+}
+
+string Suspended::writeInfo() const
+{
+	string text = Request::writeInfo();
+	text.pop_back();
+	text = "Suspended " + text;
+	text += "Suspension Date: " + suspensionDate.write() + "\n\n";
+
+	return text;
+}
+
+string Suspended::writeToFile() const
 {
 	string space = " ";
-	string str = publication->getName() + space + FILE_ITEM_SEPARATOR + space;
-	str += store->getName() + space + FILE_ITEM_SEPARATOR + space;
-	str += requestDate.write() + space + FILE_ITEM_SEPARATOR + space;
-	str += deliveryLimit.write() + space + FILE_ITEM_SEPARATOR + space;
-	str += to_string(quantity) + FILE_LINE_SEPARATOR;
-	return str;
+	string fileItem = Request::writeToFile();
+	fileItem.erase(remove(fileItem.begin(), fileItem.end(), '\n'), fileItem.end());
+
+	fileItem += space + FILE_ITEM_SEPARATOR + suspensionDate.write() + FILE_LINE_SEPARATOR;
+
+	return fileItem;
 }
 
-Date Request::getDeliveryLimit() const
-{
-	return deliveryLimit;
-}
 
-bool Request::operator<(const Request &r2)
+bool Suspended::operator==(const Suspended& req2) const
 {
-	if (publication == r2.getPublication())
-		return quantity < r2.getQuantity();
-	else
-		return publication < r2.getPublication();
+	return publication == req2.getPublication() && store == req2.getStore()
+		&& requestDate == req2.getRequestDate() && suspensionDate == req2.getSuspensionDate();
 }

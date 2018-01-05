@@ -1,0 +1,6 @@
+Magazine ; Sabado ; Revista semanal da Cofina ; Semanais ; 22-11-2017 ; 11.000000 ; 2 ; 3
+Book ; Os Lusiadas ; Epico de Luis de Camoes ; Grandes Livros ; 10-05-2015 ; 15.99 ; 1
+Book ; Os Maias ; Obra de Eca de Queiros ; Grandes Livros ; 15-07-2016 ; 14.98 ; 2
+Book ; Uma Aventura ; O Adao e a Eva na floresta ; Adao e Eva ; 13-11-2013 ; 9.99 ; 4
+Magazine ; Jornal de Noticias ; Revista semanal de noticias ; Semanais ; 01-01-2018 ; 5.99 ; 717 ; 413
+Magazine ; Diario de Noticias ; Um jornal diaria de noticias ; Diarios ; 04-01-2018 ; 7.99 ; 5413 ; 1337

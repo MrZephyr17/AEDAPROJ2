@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Classes.h"
+
 /**
 * @brief A class that manipulates the info about the day,month and year
 */
@@ -17,6 +18,7 @@ public:
 		InvalidDate(Date date) :
 			day(date.day), month(date.month), year(date.year) {}
 	};
+	static Date randomBirthDate();
 
 private:
 	Day day;
@@ -136,21 +138,6 @@ public:
 	friend bool operator>=(const Date& lhs, const Date& rhs);
 
 	friend ostream & operator<<(ostream & o, const Date & d);
-};
-
-enum class M :unsigned int {
-	January = 1,
-	February = 2,
-	March = 3,
-	April = 4,
-	May = 5,
-	June = 6,
-	July = 7,
-	August = 8,
-	September = 9,
-	October = 10,
-	November = 11,
-	December = 12
 };
 
 Date operator+(const Date& date, unsigned int days);
