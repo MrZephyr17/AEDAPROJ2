@@ -3,11 +3,14 @@
 #include "Classes.h"
 #include "Date.h"
 
-
-
-/**
-* @brief It harbors information about its own publications, requests, stock and it belongs the company
+/** @defgroup store store
+* @{
+*
+* Classe to represent a store, with methods to help store it in its appropriate data and interact with other aspects of the program.
+* It harbors information about its own publications, requests, stock and it belongs the company
 */
+
+
 class Store
 {
 private:
@@ -107,7 +110,7 @@ public:
 	// Operations
 	/**
 	* @brief Checks if stock has publications
-	* @return If store has any publications
+	* @return true if there's no stock, false otherwise
 	*/
 	bool noStock() const;
 	/**
@@ -158,17 +161,42 @@ public:
 	string writeToFile() const;
 
 
-
+	/**
+	* @brief Checks which publication have lower stock than the given argument
+	* @param n The limit
+	* @return A vector of publications that obey to the rule
+	*/
 	vector<Publication*> stockLowerThan(unsigned int n) const;
 
+	/**
+	*	@brief Gets all of the local publications
+	{	@return A vector containing information on all of the local publications
+	*/
 	vector<LocalPublication> getPublications() const;
 
+	/**
+	*	@brief Receives production of a publication from the headquarters.
+	*   @param publication The publication that is being sent
+	*	@param quantity Number of copies to be added to stock
+	*/
 	void receiveProduction(Publication* publication, unsigned int quantity);
 
+	/**
+	*	@brief Gets a structure related to the given publication
+	*	@param publication The publication which information we want to get
+	*	@return An object that holds information about a publication on the store
+	*/
 	LocalPublication getPublication(Publication* publication) const;
 
+	/**
+	*	@brief Removes a publication from the store.
+	*	@param publication the publication to be removed from the store.
+	*/
 	void removePublication(LocalPublication publication);
 
 	bool operator<(const Store& s2) const;
 };
+
+/** @} end of store */
+
 

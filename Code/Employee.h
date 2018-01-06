@@ -3,9 +3,14 @@
 #include "Classes.h"
 #include "Date.h"
 
-/**
-* @brief this class has a name and a birthday it can be assigned to a store
+
+/** @defgroup employee employee
+* @{
+*
+* Methods to represent an employee, which may or may not be associated with a store
 */
+
+
 class Employee
 {
 private:
@@ -95,3 +100,4 @@ public:
 	bool operator<(const Employee &e2) const;
 };
 
+/** @} end of employee */

@@ -3,18 +3,63 @@
 #include "Classes.h"
 #include "Date.h"
 
+
+
+
+/** @defgroup publication publication
+* @{
+*
+* Classes to represent a publication (book or magazine), with methods to help store them in their appropriate data
+* structures.
+*/
+
 class LocalPublication
 {
 private:
 	Publication* publication;
 	unsigned int stock;
 public:
+
+	/**
+	*	@brief Creates an empty local publication.
+	*/
 	LocalPublication();
+
+	/**
+	*	@brief Creates a local publication with the given parameters
+	*	@param publication the publication to be stored locally
+	*	@param stock the number of copies to be stored in the store
+	*/
 	LocalPublication(Publication *publication, unsigned int stock);
+
+	/**
+	*	@brief Gets the associated publication
+	*   @return pointer to the associated publication
+	*/
 	Publication* getPublication() const;
+
+	/**
+	*	@brief Gets the stock of the publication on the store
+	*	@return Number of copies of the publication on the store
+	*/
 	unsigned int getStock() const;
+
+	/**
+	*	@brief Sets the stock of the publication.
+	*	@param stock the new stock of the publication.
+	*/
 	void setStock(unsigned int stock);
+
+	/**
+	*	@brief Adds some copies to the local stock
+	*	@param quantity the number of copies to be added to the stock.
+	*/
 	void addStock(unsigned int quantity);
+
+	/**
+	*	@brief Writes information of the object to a string.
+	*	@return a formatted string containing information on the local publication.
+	*/
 	string write() const;
 
 	bool operator<(const LocalPublication& p2) const;
@@ -49,10 +94,15 @@ public:
 	* @param collection A pointer to the collection that the publication will be placed in.
 	* @param date the date of the creation of the publication.
 	* @param price The price of the publication.
+	* @param type Type of the publication (book or magazine).
 	*/
 	Publication(string name, string description, string collection, Date releaseDate, double price, string type);
 
-	
+	/**
+	*	@brief Creates a publication after reading the publications file
+	*	@param info A string with information about a publication
+	*	@param company The company associated with the publication
+	*/
 	Publication(string info, Company* company);
 
 	// Gets
@@ -61,29 +111,41 @@ public:
 	* @return the name of the publication.
 	*/
 	string getName() const;
+
 	/**
 	* @brief gets the description of the the specific publication.
 	* @return the description of the publication.
 	*/
 	string getDescription() const;
+
 	/**
 	* @brief gets the collection of the the specific publication.
 	* @return the colletion of the publication.
 	*/
 	string getCollection() const;
+
 	/**
 	* @brief gets the date of the the specific publication.
 	* @return the date of the publication.
 	*/
 	Date getReleaseDate() const;
+
 	/**
 	* @brief gets the price of the the specific publication.
 	* @return the price of the publication.
 	*/
 	double getPrice() const;
 
+	/**
+	* @brief Gets the type of the the specific publication.
+	* @return the type of the publication.
+	*/
 	string getType() const;
 	
+	/** 
+	*	@brief Gets a vector containing all of the active requests related to the publication
+	*	@return A vector of pointers to the requests related to the publication
+	*/
 	vector<Request*> getRequests() const;
 
 	// Sets
@@ -112,6 +174,10 @@ public:
 	*/
 	virtual string writeInfo() const;
 
+	/**
+	* @brief Creates and returns a formated string containing data of the publication to be written to a file.
+	* @return a string containing information of the publication
+	*/
 	virtual string writeToFile() const;
 
 	bool operator<(const Publication& publ) const;
@@ -138,6 +204,11 @@ public:
 	*/
 	Book(string name, string description, string collection, Date date, double price, unsigned int edition = 1);
 
+	/**
+	*	@brief Creates a book after reading the publications file
+	*	@param info A string with information about a book
+	*	@param company The company associated with the book
+	*/
 	Book(string info, Company* company);
 
 	// Gets
@@ -156,6 +227,10 @@ public:
 	*/
 	string writeInfo() const;
 
+	/**
+	* @brief Creates and returns a formated string containing data of the book to be written to a file.
+	* @return a string containing information of the book
+	*/
 	string writeToFile() const;
 };
 /**
@@ -180,6 +255,11 @@ public:
 	*/
 	Magazine(string name, string description, string collection, Date date, double price, unsigned int v, unsigned int n);
 
+	/**
+	*	@brief Creates a magazine after reading the publications file
+	*	@param info A string with information about a magazine
+	*	@param company The company associated with the magazine
+	*/
 	Magazine(string info, Company* company);
 
 	// Gets
@@ -203,5 +283,11 @@ public:
 	*/
 	string writeInfo() const;
 
+	/**
+	* @brief Creates and returns a formated string containing data of the magazine to be written to a file.
+	* @return a string containing information of the magazine
+	*/
 	string writeToFile() const;
 };
+
+/** @} end of publication */

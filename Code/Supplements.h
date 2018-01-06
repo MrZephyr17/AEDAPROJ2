@@ -112,13 +112,3 @@ T* getObject(string name, const set<T*, PComp<T> > &set)
 	else
 		return *it;
 }
-
-template <class T>
-bool hasObject(string name, const set<T*, PComp<T> > &set)
-{
-	auto it = findObject(name, set);
-	if (it == set.cend())
-		return false;
-	else
-		return true;
-}

@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['aux',['Aux',['../namespace_managers_1_1_aux.html',1,'Managers']]],
+  ['magazine',['Magazine',['../class_magazine.html',1,'Magazine'],['../class_magazine_collection.html#a3f49ecdf79a520a1870027d9e4664db7',1,'MagazineCollection::Magazine()'],['../class_magazine.html#a4c7a4a7b37f382ef7a178d6939376ca4',1,'Magazine::Magazine(string name, string description, string collection, Date date, double price, unsigned int v, unsigned int n)'],['../class_magazine.html#a5d2c59a8111a0a01385d2268b207bf96',1,'Magazine::Magazine(string info, Company *company)']]],
+  ['magazinecollection',['MagazineCollection',['../class_magazine_collection.html',1,'MagazineCollection'],['../class_magazine_collection.html#a25ac97939fba19630467a9dc072f566c',1,'MagazineCollection::MagazineCollection(string info, Company *company)'],['../class_magazine_collection.html#a7a71f2b4561787aaaa70643f7f2e8711',1,'MagazineCollection::MagazineCollection(Company *company, string name, string type, unsigned int time, unsigned int freq)']]],
+  ['main',['main',['../main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4',1,'main.cpp']]],
+  ['main_2ecpp',['main.cpp',['../main_8cpp.html',1,'']]],
+  ['main_5fwidth',['MAIN_WIDTH',['../group__classes.html#gaef349edcb2579e009c6a46970a40b981',1,'Classes.h']]],
+  ['maincontent',['mainContent',['../class_page.html#a3d556a6876b702faa95824e489889100',1,'Page']]],
+  ['makerequest',['makeRequest',['../class_store.html#ada43dc05e4753ac5a3fb8fca1cc59b67',1,'Store']]],
+  ['malformedfileitem',['MalformedFileItem',['../class_malformed_file_item.html',1,'MalformedFileItem&lt; T &gt;'],['../group__exceptions.html#ga622ae61879f86e192190befb96dd9e0b',1,'MalformedFileItem::MalformedFileItem()']]],
+  ['manager',['Manager',['../group__classes.html#ga09e4b4e1ba843cc2901205f09a809749',1,'Classes.h']]],
+  ['managerdata',['ManagerData',['../struct_manager_data.html',1,'ManagerData'],['../struct_manager_data.html#ad2ca0ac5a9bcc28b51b9c3c57a1719be',1,'ManagerData::ManagerData()']]],
+  ['managers',['Managers',['../namespace_managers.html',1,'']]],
+  ['managers_2ecpp',['Managers.cpp',['../_managers_8cpp.html',1,'']]],
+  ['managers_2eh',['Managers.h',['../_managers_8h.html',1,'']]],
+  ['managers_5faux_2ecpp',['Managers_aux.cpp',['../_managers__aux_8cpp.html',1,'']]],
+  ['march',['March',['../namespace_months.html#aec0210dbbe020e216e8b4060e0dd792d',1,'Months']]],
+  ['max_5fwidth',['MAX_WIDTH',['../group__classes.html#ga0e9d4003787634607af9e97e14b9668b',1,'Classes.h']]],
+  ['may',['May',['../namespace_months.html#abc9852f66ece4935060bef82c787d31a',1,'Months']]],
+  ['menu',['Menu',['../class_menu.html',1,'Menu'],['../class_menu.html#a1b78168b77a6a352343ab1f46e9e0f73',1,'Menu::Menu()'],['../class_page.html#a36a695b30c2faca50d417316dd25407c',1,'Page::menu()'],['../struct_manager_data.html#a72d10bfa12b64dc1324c70ab4554c98e',1,'ManagerData::menu()']]],
+  ['message',['message',['../class_name_not_found.html#ad0bb9dc8ebc0d0fe7f2f442d4603a1c8',1,'NameNotFound::message()'],['../group__exceptions.html#gadd4fb55542e18099ccb821309b619ad1',1,'DuplicateElement::message()'],['../group__exceptions.html#gabf2c5863dc34aae6258766cf0c37f705',1,'NonExistentElement::message()'],['../group__exceptions.html#ga1d546fadb26c108530a5e11dd159f721',1,'MalformedFileItem::message()']]],
+  ['minproductiontime',['minProductionTime',['../class_collection.html#aa73e7e880c2284e883d3b9b5e34ea2fb',1,'Collection']]],
+  ['month',['month',['../struct_date_1_1_invalid_date.html#acd2b95df91012e2192cefc164ea3b0f6',1,'Date::InvalidDate::month()'],['../struct_invalid_date.html#a5414f99fbc2ed5ded12c472aa82825f3',1,'InvalidDate::month()'],['../class_date.html#a39806177aab7b4d8575ebaef7375df22',1,'Date::Month()']]],
+  ['months',['Months',['../namespace_months.html',1,'']]],
+  ['writer',['Writer',['../namespace_managers_1_1_writer.html',1,'Managers']]]
+];

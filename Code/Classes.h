@@ -9,9 +9,16 @@
 #include <queue>
 #include <ctime>
 
-#define MAIN_WIDTH					105 /* > 60 */
-#define MAX_WIDTH					130 /* > MAIN_WIDTH */
-#define SHORT_WIDTH					70
+/** @defgroup classes classes
+* @{
+*
+* Constants and class declarations in order to simplify the code and improve readability
+*/
+
+
+#define MAIN_WIDTH					105		
+#define MAX_WIDTH					130		
+#define SHORT_WIDTH					70		
 
 #define TOKEN_SPLITTERS				":-><="
 #define LIST_SPLITTERS				",;"
@@ -89,3 +96,6 @@ struct FormOptions;
 struct FormEntry;
 class Form;
 using Forms = map<string, Form>;
+
+
+/** @} end of classes */

@@ -5,6 +5,14 @@
 #include <iostream>
 
 
+
+/** @defgroup exceptions exceptions
+* @{
+*
+* Classes to help catch exceptions related to the various structures in the company
+*/
+
+
 /**
 * @brief This exception is responsible for catching names that aren't present in the database
 */
@@ -143,3 +151,5 @@ template <class T>
 T* MalformedFileItem<T>::element() const {
 	return el;
 }
+
+/** @} end of exceptions */

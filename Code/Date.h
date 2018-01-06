@@ -2,9 +2,13 @@
 
 #include "Classes.h"
 
-/**
-* @brief A class that manipulates the info about the day,month and year
+
+/** @defgroup date date
+* @{
+*
+* Represents a date, manipulating the info about the day, month and year
 */
+
 class Date
 {
 public:
@@ -140,7 +144,14 @@ public:
 	friend ostream & operator<<(ostream & o, const Date & d);
 };
 
+
 Date operator+(const Date& date, unsigned int days);
+
+/** @name InvalidDate */
+/**@{
+*
+* Struct to help catch invalid dates
+*/
 
 struct InvalidDate {
 	Date::Day day;
@@ -149,3 +160,8 @@ struct InvalidDate {
 	InvalidDate(Date date) :
 		day(date.getDay()), month(date.getMonth()), year(date.getYear()) {}
 };
+
+/** @} end of InvalidDate*/
+
+
+/** @} end of date */
