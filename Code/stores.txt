@@ -1,15 +1,98 @@
+Braga ; 925846225
+Diario de Noticias ; 10
+Os Lusiadas ; 10
+Visao ; 10
+Mensagem ; 10
+Livro do Desassossego ; 10
+Memorial do Convento ; 10
+Viagens na Minha Terra ; 10
+Uma Aventura ; 10
+Noticias Magazine ; 10
+Sabado ; 10
+Jornal de Noticias ; 10
+Os Maias ; 10
+
+Coimbra ; 912365859
+Diario de Noticias ; 10
+Os Lusiadas ; 10
+Visao ; 10
+Mensagem ; 10
+Livro do Desassossego ; 10
+Memorial do Convento ; 10
+Viagens na Minha Terra ; 10
+Uma Aventura ; 10
+Noticias Magazine ; 10
+Sabado ; 10
+Jornal de Noticias ; 10
+Os Maias ; 10
+
+Faro ; 966231485
+Diario de Noticias ; 10
+Os Lusiadas ; 10
+Visao ; 10
+Mensagem ; 10
+Livro do Desassossego ; 10
+Memorial do Convento ; 10
+Viagens na Minha Terra ; 10
+Uma Aventura ; 10
+Noticias Magazine ; 10
+Sabado ; 10
+Jornal de Noticias ; 10
+Os Maias ; 10
+
 Lisboa1 ; 924565123
-Sabado ; 10 
-Os Lusiadas ; 20 
-Os Maias ; 12 
-Jornal de Noticias ; 73
-Diario de Noticias ; 37
+Sabado ; 10
+Visao ; 10
+Mensagem ; 10
+Livro do Desassossego ; 10
+Noticias Magazine ; 10
+Memorial do Convento ; 10
+Viagens na Minha Terra ; 10
+Os Maias ; 12
+Os Lusiadas ; 20
 Uma Aventura ; 24
+Diario de Noticias ; 37
+Jornal de Noticias ; 73
+
+Lisboa2 ; 927456982
+Diario de Noticias ; 10
+Os Lusiadas ; 10
+Visao ; 10
+Mensagem ; 10
+Livro do Desassossego ; 10
+Memorial do Convento ; 10
+Viagens na Minha Terra ; 10
+Uma Aventura ; 10
+Noticias Magazine ; 10
+Sabado ; 10
+Jornal de Noticias ; 10
+Os Maias ; 10
 
 Porto ; 961234568
-Sabado ; 10 
-Os Lusiadas ; 47
+Sabado ; 10
+Visao ; 10
+Mensagem ; 10
+Livro do Desassossego ; 10
+Noticias Magazine ; 10
+Memorial do Convento ; 10
+Viagens na Minha Terra ; 10
 Os Maias ; 12
-Jornal de Noticias ; 101
-Diario de Noticias ; 35
 Uma Aventura ; 25
+Diario de Noticias ; 35
+Os Lusiadas ; 47
+Jornal de Noticias ; 101
+
+Vila Real ; 965472135
+Diario de Noticias ; 10
+Os Lusiadas ; 10
+Visao ; 10
+Mensagem ; 10
+Livro do Desassossego ; 10
+Memorial do Convento ; 10
+Viagens na Minha Terra ; 10
+Uma Aventura ; 10
+Noticias Magazine ; 10
+Sabado ; 10
+Jornal de Noticias ; 10
+Os Maias ; 10
+
