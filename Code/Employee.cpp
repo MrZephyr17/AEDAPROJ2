@@ -23,7 +23,7 @@ Employee::Employee(string info, Company* company) :
 }
 
 Employee::Employee(Company* company, string name, Date birthDate) :
-	company(company), name(name), birthDate(birthDate) {}
+	company(company), name(name), birthDate(birthDate), store(nullptr){}
 
 string Employee::getName() const
 {

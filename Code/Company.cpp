@@ -54,10 +54,11 @@ bool Company::addPublication(Publication *newP)
 bool Company::addEmployee(Employee *newE)
 {
 	if (!nameAvailable(newE->getName())) return false;
-
 	employees.insert(newE);
-	if (newE->getStore() != nullptr)
+
+	if (newE->getStore() != nullptr) 
 		designateEmployee(newE->getStore(), newE);
+
 
 	return true;
 }
